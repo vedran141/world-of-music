@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>O projektu | World of Music</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="dark-theme">
+    <header class="site-header">
+        <a href="index.html" class="logo">World of Music</a>
+        <nav class="nav">
+            <button class="nav-toggle" aria-label="Otvori navigaciju">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html">Početna</a></li>
+                <li><a href="classic_rock.html">Classic Rock</a></li>
+                <li><a href="indie.html">Indie</a></li>
+                <li><a href="funk.html">Funk</a></li>
+                <li><a href="stats.html">Statistike</a></li>
+                <li><a href="about.html" class="active">O projektu</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <h1>O projektu</h1>
+            <p>World of Music je mali vodič kroz classic rock, indie i funk žanrove.</p>
+        </section>
+
+        <section class="content-grid">
+            <article class="info-block">
+                <h2>Cilj web sjedišta</h2>
+                <p>Cilj je na jednostavan način predstaviti tri žanra koja se najčešće slušaju i prikazati ih kroz
+                    primjere izvođača i albuma.</p>
+                <p>Uz tekstualni sadržaj, web sjedište koristi interaktivne elemente i D3.js vizualizaciju za prikaz
+                    osnovnih statistika slušanosti po žanrovima.</p>
+            </article>
+
+            <article class="info-block">
+                <h2>Tehnologije</h2>
+                <p>Stranice su izrađene u HTML-u i CSS-u uz tamni, responzivni dizajn koji se prilagođava različitim
+                    uređajima.</p>
+                <p>JavaScript se koristi za interaktivne elemente, a D3.js za prikaz glazbenih statistika na zasebnoj
+                    stranici.</p>
+            </article>
+
+            <article class="info-block">
+                <h2>O autoru</h2>
+                <p>Ovdje možeš dodati par rečenica o sebi, zašto voliš ova tri žanra i kakvu glazbu najčešće slušaš.</p>
+                <p>Kasnije možemo dodati i chatbot koji odgovara na osnovna pitanja o žanrovima i preporukama za
+                    slušanje.</p>
+            </article>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p class="footer-copy">&copy; 2025 World of Music. Sva prava pridržana.</p>
+        <nav class="social-nav">
+            <ul class="social-list">
+                <li onclick="leavingPage()">
+                    <a title="Facebook" href="https://www.facebook.com" target="_blank">
+                        <img src="img/logo_facebook.png" alt="Facebook">
+                    </a>
+                </li>
+                <li onclick="leavingPage()">
+                    <a title="Instagram" href="https://www.instagram.com" target="_blank">
+                        <img src="img/logo_instagram.png" alt="Instagram">
+                    </a>
+                </li>
+                <li onclick="leavingPage()">
+                    <a title="TikTok" href="https://www.tiktok.com" target="_blank">
+                        <img src="img/logo_tiktok.png" alt="TikTok">
+                    </a>
+                </li>
+                <li onclick="leavingPage()">
+                    <a title="Spotify" href="https://open.spotify.com" target="_blank">
+                        <img src="img/logo_spotify.png" alt="Spotify">
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>

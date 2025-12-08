@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Funk | World of Music</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="dark-theme">
+    <header class="site-header">
+        <a href="index.html" class="logo">World of Music</a>
+        <nav class="nav">
+            <button class="nav-toggle" aria-label="Otvori navigaciju">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html">Početna</a></li>
+                <li><a href="classic_rock.html">Classic Rock</a></li>
+                <li><a href="indie.html">Indie</a></li>
+                <li><a href="funk.html" class="active">Funk</a></li>
+                <li><a href="stats.html">Statistike</a></li>
+                <li><a href="about.html">O projektu</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <h1>Funk</h1>
+            <p>
+                Kod funka bas i bubnjevi vode cijelu priču, a ostatak benda ubacuje raznolike fraze preko toga. Onaj tip glazbe koji ti nakon par sekundi jednostavno natjera nogu da krene lupkati.
+            </p>
+        </section>
+
+        <section class="section">
+            <div class="content-grid">
+                <article class="info-block">
+                    <h2>Osnovne karakteristike</h2>
+                    <p>
+                        U funku je naglasak na ritmu. Bas i bubnjevi rade kratke, vrlo precizne fraze koje se vrte kroz
+                        cijelu pjesmu, ali se često izvode malo drukčije tako da postoji više varijanti. Improvizacija
+                        je velik dio funk izvedbe, posebno kod bubnjara i basista, što je i posebnost ovog žanra.
+                    </p>
+                    <p>
+                        Gitara, klavijature i puhački instrumenti često sviraju kratke, sinkopirane dionice koje dodatno naglašavaju ritam i daju energiju pjesmi. Vokal je često ritmičan i često se koristi praktički kao još jedan instrument.
+                    </p>
+                </article>
+
+                <article class="info-block">
+                    <h2>Najpoznatiji izvođači za upoznavanje</h2>
+                    <ul class="band-list">
+                        <li>James Brown</li>
+                        <li>Kool & The Gang</li>
+                        <li>Earth, Wind & Fire</li>
+                        <li>Stevie Wonder</li>
+                        <li>Chic</li>
+                        <li>Jamiroquai</li>
+                    </ul>
+                </article>
+
+                <article class="info-block">
+                    <h2>Kako slušati?</h2>
+                    <p>
+                        Najbolji način za razumijeti funk je pokušati shvatiti gdje se nalaze naglasci, zato što često nisu na onim dijelovima takta gdje ih se očekuje.
+                    </p>
+                    <button class="details-button" data-toggle="details" data-target="funk-details">
+                        Prikaži detalje
+                    </button>
+                    <p id="funk-details" class="details-text">
+                        Probaj krenuti od jedne pjesme i lupkaj nogom uz bas, a zatim u sljedećem slušanju uz snare bubanj. Primijetit ćeš kako mali pomaci u tajmingu stvaraju razliku.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Mini-game</h2>
+            <p class="section-intro">
+                Ovdje se nalazi kratka ideja što možeš napraviti sljedeći put kada ćeš slušati funk. Gumb ispod generira nasumičan zadatak povezan s ovim žanrom.
+            </p>
+
+            <button class="details-button" data-role="recommend-btn" data-genre="funk">
+                Daj mi random funk zadatak
+            </button>
+            <p class="recommendation-text" data-genre-text="funk">
+                Klikni na gumb iznad za ideju.
+            </p>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p class="footer-copy">&copy; 2025 World of Music. Sva prava pridržana.</p>
+        <nav class="social-nav">
+            <ul class="social-list">
+                <li onclick="leavingPage()">
+                    <a title="Facebook" href="https://www.facebook.com" target="_blank">
+                        <img src="img/logo_facebook.png" alt="Facebook">
+                    </a>
+                </li>
+                <li onclick="leavingPage()">
+                    <a title="Instagram" href="https://www.instagram.com" target="_blank">
+                        <img src="img/logo_instagram.png" alt="Instagram">
+                    </a>
+                </li>
+                <li onclick="leavingPage()">
+                    <a title="TikTok" href="https://www.tiktok.com" target="_blank">
+                        <img src="img/logo_tiktok.png" alt="TikTok">
+                    </a>
+                </li>
+                <li onclick="leavingPage()">
+                    <a title="Spotify" href="https://open.spotify.com" target="_blank">
+                        <img src="img/logo_spotify.png" alt="Spotify">
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>

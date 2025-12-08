@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>World of Music</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="dark-theme">
+    <header class="site-header">
+        <a href="index.html" class="logo">World of Music</a>
+        <nav class="nav">
+            <button class="nav-toggle" aria-label="Otvori navigaciju">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Početna</a></li>
+                <li><a href="classic_rock.html">Classic Rock</a></li>
+                <li><a href="indie.html">Indie</a></li>
+                <li><a href="funk.html">Funk</a></li>
+                <li><a href="stats.html">Statistike</a></li>
+                <li><a href="about.html">O projektu</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero sa slikom u pozadini -->
+        <section class="hero hero-with-image">
+            <div class="hero-overlay"></div>
+            <div class="hero-content hero-content-wide">
+                <p class="hero-tagline">Mali osobni glazbeni kutak</p>
+                <h1>WORLD OF MUSIC</h1>
+                <p class="hero-subtitle">
+                    Mjesto za glazbu koju najčešće slušam: malo gitara iz 70-ih i 80-ih, malo novijih indie stvari i
+                    malo funka. Nije enciklopedija, više je kao sažetak onoga što slušam, ali i samih žanrova i njihovih
+                    značajki.
+                </p>
+                <div class="hero-actions">
+                    <a href="stats.html" class="btn-primary">Otvori statistike slušanja</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sekcija: Zašto glazba? -->
+        <section class="section" id="why-music">
+            <h2>Zašto nam je glazba toliko bitna?</h2>
+            <p class="section-intro">
+                Svaki dan ili period ima svoj soundtrack. Neke pjesme nas podsjećaju na određene ljude ili događaje, dok
+                neke služe kao pozadina za učenje ili trening. U nastavku pročitaj neke od značajki koje nam glazba
+                nudi.
+            </p>
+
+            <div class="discover-grid">
+                <article class="info-block">
+                    <h3>Raspoloženje</h3>
+                    <p>
+                        Glazba je najbrži način da promijenimo svoje raspoloženje ili atmosferu u društvu. Primjerice,
+                        samo nekoliko minuta dovoljno je da se iz totalnog umora prebaciš u “ok, sad možemo dalje” mod.
+                    </p>
+                </article>
+
+                <article class="info-block">
+                    <h3>Sjećanja</h3>
+                    <p>
+                        Ponekad neka pjesma ili playlista postane poveznica na neki događaj, bio da je događaj bio
+                        zaista značajan ili ne. Sjetiš se gdje si bio u tom trenutku, tko je bio s tobom i zašto ti je
+                        ta pjesma ostala u glavi.
+                    </p>
+                </article>
+
+                <article class="info-block">
+                    <h3>Fokus</h3>
+                    <p>
+                        Za neke stvari poput učenja trebaju ti mirnije i laganije stvari u pozadini, dok za neke poput
+                        treniranja tražiš brži ritam. Odabirom glazbe često biramo način na koji ćemo nešto raditi i u
+                        kojem raspoloženju ćemo pritom biti.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <!-- Sekcija: Što nudi World of Music -->
+        <section class="section">
+            <h2>Što možeš raditi na World of Music?</h2>
+            <p class="section-intro">
+                World of Music je zamišljen kao mali glazbeni blog. Fokus je na tri žanra koja osobno najčešće slušam. Na svakoj stranici su kratki opisi, nekoliko bendova i albuma te par ideja kako pristupiti svakom žanru, tako da odmah imaš od čega krenuti ako voliš slične stvari ili jednostavno ako te zanimaju.
+            </p>
+
+
+            <div class="how-grid">
+                <article class="how-card">
+                    <h3>Istraži žanrove</h3>
+                    <p>
+                        Svaka podstranica prikazuje kratki opis žanra, nekoliko najpoznatijih izvođača i najpoznatijih
+                        albuma koji predstavljaju taj žanr. Dostupni žanrovi su odabrani od strane autora.
+                    </p>
+                </article>
+
+                <article class="how-card">
+                    <h3>Isprobaj chatbota</h3>
+                    <p>
+                        Na stranici “O projektu” nalazi se jednostavan chatbot kojem možeš postavljati osnovna pitanja o
+                        ovim žanrovima ili prijedlozima za slušanje. Ideja je da se ponaša kao mali glazbeni vodič kroz
+                        ovo web sjedište.
+                    </p>
+                </article>
+
+                <article class="how-card">
+                    <h3>Pogledaj kako je složeno</h3>
+                    <p>
+                        World of Music je izrađen kao osobni projekt i primjer responzivnog web sjedišta s tamnim
+                        dizajnom. Uključuje i JavaScript interakcije te D3.js vizualizacije na stranici sa statistikama.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="highlight" id="highlight">
+            <h2>Glazbeni chatbot</h2>
+            <p>
+                U sklopu ovog web sjedišta napravljen je i mali chatbot prilagođen temi glazbe. Nalazi se na stranici “O
+                projektu”. Chatbot ima zadatak kratko odgovoriti na pitanja o svim ovdje spomenutim žanrovima, kao i
+                usmjeriti te na dijelove stranice koji te najviše zanimaju.
+            </p>
+            <ul class="info">
+                <li><strong>Pitanja o žanrovima:</strong> osnovne informacije, karakteristike i preporuke.</li>
+                <li><strong>Navigacija:</strong> pomoć pri pronalasku određenog sadržaja na World of Music.</li>
+                <li><strong>Dodatne ideje:</strong> prijedlozi što još možeš dodati ili proširiti na webu.</li>
+            </ul>
+        </section>
+    </main>
+
+
+    <footer class="site-footer">
+        <p class="footer-copy">&copy; 2025 World of Music. Sva prava pridržana.</p>
+        <nav class="social-nav">
+            <ul class="social-list">
+                <li onclick="leavingPage()">
+                    <a title="Facebook" href="https://www.facebook.com" target="_blank">
+                        <img src="img/logo_facebook.png" alt="Facebook">
+                    </a>
+                </li>
+                <li onclick="leavingPage()">
+                    <a title="Instagram" href="https://www.instagram.com" target="_blank">
+                        <img src="img/logo_instagram.png" alt="Instagram">
+                    </a>
+                </li>
+                <li onclick="leavingPage()">
+                    <a title="TikTok" href="https://www.tiktok.com" target="_blank">
+                        <img src="img/logo_tiktok.png" alt="TikTok">
+                    </a>
+                </li>
+                <li onclick="leavingPage()">
+                    <a title="Spotify" href="https://open.spotify.com" target="_blank">
+                        <img src="img/logo_spotify.png" alt="Spotify">
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>

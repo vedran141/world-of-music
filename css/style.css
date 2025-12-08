@@ -1,0 +1,428 @@
+/* Osnovni reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body.dark-theme {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background-color: #050510;
+    color: #f5f5f5;
+    line-height: 1.6;
+}
+
+/* Layout */
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem 1.5rem;
+}
+
+p {
+    color: #ccccff;
+}
+
+/* Header i navigacija */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(90deg, #050510 0%, #111133 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 14px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #f5f5f5;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+}
+
+/* Desktop linkovi */
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 16px;
+}
+
+.nav-links a {
+    color: #d5d5ff;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 10px;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.nav-links a:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+.nav-links a.active {
+    background: #7b5cff;
+    color: #ffffff;
+}
+
+/* Hamburger gumb (skriven na desktopu) */
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.nav-toggle span {
+    width: 20px;
+    height: 2px;
+    background-color: #f5f5f5;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.page-header {
+    margin-top: 40px;
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    font-size: 42px;
+    margin-bottom: 8px;
+}
+
+.page-header p {
+    color: #ccccff;
+    max-width: 640px;
+}
+
+/* Hero sekcija */
+.hero {
+    padding: 64px 0 40px;
+    text-align: center;
+    background: radial-gradient(circle at top, #26264d 0, transparent 55%);
+}
+
+.hero-content h1 {
+    font-size: clamp(40px, 5vw, 56px);
+    margin-bottom: 12px;
+}
+
+.hero-content p {
+    font-size: 18px;
+    margin-bottom: 32px;
+}
+
+/* Hero sekcija s pozadinskom slikom samo za naslovnicu */
+.hero-with-image {
+    position: relative;
+    min-height: 65vh;
+    padding-top: 80px;
+    padding-bottom: 64px;
+    background-image:
+        linear-gradient(135deg, rgba(5, 5, 16, 0.8), rgba(5, 5, 32, 0.95)),
+        url("../img/home_bg.jpg");
+    /* promijeni putanju do slike po potrebi */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 60%);
+    pointer-events: none;
+}
+
+.hero-content-wide {
+    position: relative;
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: left;
+    padding: 0 24px;
+}
+
+.hero-tagline {
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #a5a5ff;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Gumb za statistiku */
+.btn-primary {
+    display: inline-block;
+    padding: 10px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #7b5cff, #ff4fa3);
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    filter: brightness(1.1);
+}
+
+/* Highlight sekcija */
+.highlight {
+    margin-top: 32px;
+}
+
+.info {
+    list-style: disc;
+    margin-left: 24px;
+    margin-top: 12px;
+    color: #ccccff;
+}
+
+/* Footer */
+.site-footer {
+    margin-top: 48px;
+    padding: 24px 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: center;
+    background: #050510;
+    color: #aaaacc;
+}
+
+.social-nav {
+    margin-bottom: 12px;
+}
+
+.social-list {
+    list-style: none;
+    display: inline-flex;
+    gap: 16px;
+    padding: 0;
+    margin: 0;
+}
+
+.social-list li {
+    display: inline-block;
+}
+
+.social-list img {
+    display: block;
+    width: 35px;
+    height: 35px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.social-list img:hover {
+    transform: translateY(-1px) scale(1.03);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+}
+
+.footer-copy {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #8c8cc0;
+}
+
+/* Mobilni prikaz */
+@media (max-width: 768px) {
+    .site-header {
+        padding-inline: 16px;
+    }
+
+    .nav-toggle {
+        display: flex;
+    }
+
+    .nav-links {
+        position: absolute;
+        top: 60px;
+        right: 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        background: #050518;
+        padding: 16px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        display: none;
+    }
+
+    .nav-links.nav-open {
+        display: flex;
+    }
+
+    .hero-with-image {
+        min-height: auto;
+        padding: 48px 0;
+    }
+
+    .hero-content-wide {
+        text-align: left;
+        padding: 0 16px;
+    }
+
+    main {
+        padding-inline: 16px;
+    }
+}
+
+.info-block {
+    background: linear-gradient(145deg, #0b0b1a, #161630);
+    border-radius: 10px;
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.info-block h2 {
+    margin-bottom: 8px;
+}
+
+.info-block p {
+    margin-bottom: 8px;
+}
+
+/* Kartice 'Kako koristiti World of Music' */
+.how-card {
+    background: linear-gradient(145deg, #0b0b1a, #171736);
+    border-radius: 10px;
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.how-card h3 {
+    margin-bottom: 8px;
+}
+
+/* Opće sekcije na naslovnici */
+.section {
+    margin-top: 32px;
+}
+
+.section h2 {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.section-intro {
+    margin-bottom: 20px;
+}
+
+/* Gridovi za otkrivanje žanrova i korake korištenja */
+.content-grid,
+.discover-grid,
+.how-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* default: sve ispod svega */
+    gap: 18px;
+}
+
+/* dva stupca na srednjim širinama */
+@media (min-width: 700px) {
+    .content-grid,
+    .discover-grid,
+    .how-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* tri stupca tek na većim širinama */
+@media (min-width: 1050px) {
+    .content-grid,
+    .discover-grid,
+    .how-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* D3 JS */
+.chart-container {
+    margin-top: 24px;
+    background: linear-gradient(145deg, #050515, #101035);
+    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.genre-bar-chart {
+    width: 100%;
+    height: auto;
+}
+
+/* SVE JOŠ NEDODANO */
+/* Žanrovi */
+.genres {
+    margin-top: 3rem;
+}
+
+.genres h2,
+.highlight h2 {
+    font-size: 1.7rem;
+    margin-bottom: 1rem;
+}
+
+.genre-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.2rem;
+}
+
+/* Ostale stranice imaju ovo! */
+.band-list,
+.album-list {
+    color: #ccccff;
+    list-style: disc;
+    margin-left: 1.3rem;
+    margin-top: 0.4rem;
+}
+
+/* Javascript stvari */
+.details-text {
+    display: none;
+    margin-top: 8px;
+    color: #d0d0ff;
+    font-size: 0.95rem;
+}
+
+.details-open {
+    display: block;
+}
+
+.details-button {
+    margin-top: 8px;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    border: 1px solid #7b5cff;
+    background: transparent;
+    color: #d5d5ff;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.details-button:hover {
+    background: rgba(123, 92, 255, 0.15);
+}
+
+.recommendation-text {
+    margin-top: 10px;
+    color: #ccccff;
+    font-style: italic;
+}
