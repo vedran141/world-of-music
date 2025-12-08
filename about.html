@@ -17,7 +17,7 @@
             </button>
             <ul class="nav-links">
                 <li><a href="index.html">Početna</a></li>
-                <li><a href="classic_rock.html">Classic Rock</a></li>
+                <li><a href="classic_rock.html">Classic rock</a></li>
                 <li><a href="indie.html">Indie</a></li>
                 <li><a href="funk.html">Funk</a></li>
                 <li><a href="stats.html">Statistike</a></li>
@@ -28,33 +28,41 @@
 
     <main>
         <section class="page-header">
-            <h1>O projektu</h1>
-            <p>World of Music je mali vodič kroz classic rock, indie i funk žanrove.</p>
+            <h1>O projektu World of Music</h1>
+            <p>
+                World of Music je mali osobni glazbeni projekt. Ideja je bila na jednom mjestu okupiti žanrove koje
+                najčešće slušam i dati neke najosnovnije informacije i značajke o svakome od njih.
+            </p>
         </section>
 
-        <section class="content-grid">
-            <article class="info-block">
-                <h2>Cilj web sjedišta</h2>
-                <p>Cilj je na jednostavan način predstaviti tri žanra koja se najčešće slušaju i prikazati ih kroz
-                    primjere izvođača i albuma.</p>
-                <p>Uz tekstualni sadržaj, web sjedište koristi interaktivne elemente i D3.js vizualizaciju za prikaz
-                    osnovnih statistika slušanosti po žanrovima.</p>
-            </article>
+        <section class="section">
+            <h2>Što se nalazi na web sjedištu?</h2>
+            <p class="section-intro">
+                Na početnoj stranici je kratak uvod i pregled svega što se nalazi na webu. Za svaki od tri žanra
+                (classic rock, indie i funk) postoji posebna podstranica s osnovnim opisom, izvođačima, albumima i
+                interaktivnim elementima.
+            </p>
+            <p>
+                Stranica sa statistikama koristi D3.js za prikaz par jednostavnih grafova vezanih uz slušanje glazbe,
+                dok ova stranica služi kao kratko objašnjenje cijelog projekta i mjesto gdje se može koristiti chatbot.
+            </p>
+        </section>
 
-            <article class="info-block">
-                <h2>Tehnologije</h2>
-                <p>Stranice su izrađene u HTML-u i CSS-u uz tamni, responzivni dizajn koji se prilagođava različitim
-                    uređajima.</p>
-                <p>JavaScript se koristi za interaktivne elemente, a D3.js za prikaz glazbenih statistika na zasebnoj
-                    stranici.</p>
-            </article>
-
-            <article class="info-block">
-                <h2>O autoru</h2>
-                <p>Ovdje možeš dodati par rečenica o sebi, zašto voliš ova tri žanra i kakvu glazbu najčešće slušaš.</p>
-                <p>Kasnije možemo dodati i chatbot koji odgovara na osnovna pitanja o žanrovima i preporukama za
-                    slušanje.</p>
-            </article>
+        <section class="section">
+            <h2>Glazbeni chatbot</h2>
+            <p class="section-intro">
+                Chatbot je dodan kao web widget i povezan je s ovim web sjedištem. Njegova je uloga pomoći pri osnovnim
+                pitanjima o classic rock, indie i funk žanrovima te usmjeriti na određene dijelove stranice.
+            </p>
+            <p>
+                Na chatbotu je moguće pitati, primjerice, što se nalazi na pojedinoj stranici, gdje se nalaze statistike
+                ili tražiti kratko objašnjenje određenog žanra. Bot je treniran sadržajem sa same stranice, tako da se
+                odgovori temelje upravo na informacijama koje su već prikazane na stranicama.
+            </p>
+            <p>
+                Widget se prikazuje kao mali chat prozor u donjem desnom kutu zaslona. Klikom na ikonu otvara se
+                razgovor, a zatvaranjem se vraćaš na uobičajeno pregledavanje stranice.
+            </p>
         </section>
     </main>
 
@@ -87,6 +95,21 @@
     </footer>
 
     <script src="js/script.js"></script>
+
+    <!-- Start of ChatBot (www.chatbot.com) code -->
+    <script>
+        window.__ow = window.__ow || {};
+        window.__ow.organizationId = "9f8faeb2-3d97-48f3-89ad-b3ae6dbf5fdc";
+        window.__ow.template_id = "9d455004-2b1b-487d-a024-daaa85e5995a";
+        window.__ow.integration_name = "manual_settings";
+        window.__ow.product_name = "chatbot";
+        ; (function (n, t, c) { function i(n) { return e._h ? e._h.apply(null, n) : e._q.push(n) } var e = { _q: [], _h: null, _v: "2.0", on: function () { i(["on", c.call(arguments)]) }, once: function () { i(["once", c.call(arguments)]) }, off: function () { i(["off", c.call(arguments)]) }, get: function () { if (!e._h) throw new Error("[OpenWidget] You can't use getters before load."); return i(["get", c.call(arguments)]) }, call: function () { i(["call", c.call(arguments)]) }, init: function () { var n = t.createElement("script"); n.async = !0, n.type = "text/javascript", n.src = "https://cdn.openwidget.com/openwidget.js", t.head.appendChild(n) } }; !n.__ow.asyncInit && e.init(), n.OpenWidget = n.OpenWidget || e }(window, document, [].slice))
+    </script>
+    <noscript>You need to <a href="https://www.chatbot.com/help/chat-widget/enable-javascript-in-your-browser/"
+            rel="noopener nofollow">enable JavaScript</a> in order to use the AI chatbot tool powered by <a
+            href="https://www.chatbot.com/" rel="noopener nofollow" target="_blank">ChatBot</a></noscript>
+    <!-- End of ChatBot code -->
+
 </body>
 
 </html>

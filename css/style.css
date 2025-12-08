@@ -102,11 +102,6 @@ p {
     margin-bottom: 8px;
 }
 
-.page-header p {
-    color: #ccccff;
-    max-width: 640px;
-}
-
 /* Hero sekcija */
 .hero {
     padding: 64px 0 40px;
