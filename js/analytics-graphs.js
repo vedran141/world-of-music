@@ -1,24 +1,111 @@
-// Dohvaćanje podataka iz Google Analytics - PREKO BACKEND-a
+// Google Analytics API Configuration
+const CLIENT_ID = '1093306972763-1uld61mraqce17lquhd3mi6bf01l50cf.apps.googleusercontent.com';
+const API_KEY = 'AIzaSyC9wVrhWU9Gz8YEj5h1Hkzs5k9y2va_Qxo';
+const PROPERTY_ID = '521095907';
+const SCOPES = 'https://www.googleapis.com/auth/analytics.readonly';
+
+let tokenClient;
+let gapiInited = false;
+let gisInited = false;
+
+// Inicijalizacija Google API
+function gapiLoaded() {
+    gapi.load('client', initializeGapiClient);
+}
+
+async function initializeGapiClient() {
+    try {
+        await gapi.client.init({
+            apiKey: API_KEY,
+            discoveryDocs: [], // Prazan - koristimo direktan fetch
+        });
+        gapiInited = true;
+        maybeEnableButtons();
+        console.log('GAPI initialized successfully');
+    } catch (err) {
+        console.error('GAPI init error:', err);
+    }
+}
+
+function gisLoaded() {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        callback: '', // definirano kasnije
+    });
+    gisInited = true;
+    maybeEnableButtons();
+    console.log('GIS initialized successfully');
+}
+
+function maybeEnableButtons() {
+    if (gapiInited && gisInited) {
+        document.getElementById('authorize-btn').style.display = 'inline-block';
+        console.log('Authorization button enabled');
+    }
+}
+
+// OAuth 2.0 autentifikacija
+function handleAuthClick() {
+    tokenClient.callback = async (resp) => {
+        if (resp.error !== undefined) {
+            console.error('Auth error:', resp);
+            throw (resp);
+        }
+        console.log('Authorization successful');
+        document.getElementById('authorize-btn').style.display = 'none';
+        document.getElementById('signout-btn').style.display = 'inline-block';
+        await fetchAnalyticsData();
+    };
+
+    if (gapi.client.getToken() === null) {
+        tokenClient.requestAccessToken({prompt: 'consent'});
+    } else {
+        tokenClient.requestAccessToken({prompt: ''});
+    }
+}
+
+function handleSignoutClick() {
+    const token = gapi.client.getToken();
+    if (token !== null) {
+        google.accounts.oauth2.revoke(token.access_token);
+        gapi.client.setToken('');
+        document.getElementById('authorize-btn').style.display = 'inline-block';
+        document.getElementById('signout-btn').style.display = 'none';
+        document.getElementById('analytics-content').innerHTML = '';
+    }
+}
+
+// Dohvaćanje podataka iz Google Analytics - KORISTI FETCH umjesto gapi.client
 async function fetchAnalyticsData() {
     try {
         document.getElementById('analytics-content').innerHTML = '<p>Učitavanje podataka...</p>';
         
-        console.log('Fetching data via backend proxy...');
+        const token = gapi.client.getToken();
+        if (!token) {
+            throw new Error('No access token available');
+        }
 
-        // Helper funkcija za API pozive - POZIVA BACKEND umjesto Google direktno
+        console.log('Fetching data for Property ID:', PROPERTY_ID);
+
+        // Helper funkcija za API pozive
         async function runReport(body) {
-            const response = await fetch('/api/analytics', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(body)
-            });
+            const response = await fetch(
+                `https://analyticsdata.googleapis.com/v1beta/properties/${PROPERTY_ID}:runReport`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token.access_token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body)
+                }
+            );
 
             if (!response.ok) {
-                const errorData = await response.json();
-                console.error('Backend error:', response.status, errorData);
-                throw new Error(`Backend request failed: ${response.status} - ${errorData.error}`);
+                const errorText = await response.text();
+                console.error('API Error:', response.status, errorText);
+                throw new Error(`API request failed: ${response.status}`);
             }
 
             return await response.json();
@@ -84,9 +171,14 @@ async function fetchAnalyticsData() {
                 <hr style="margin: 16px 0; border-color: rgba(255,79,163,0.3);">
                 <p style="font-size: 14px; color: #d0d0ff;">
                     <strong>Mogući uzroci:</strong><br>
-                    • Backend serverless funkcija nije dostupna<br>
-                    • Service Account nema pristup Analytics Property-ju<br>
-                    • Environment variable nije pravilno postavljena
+                    • Property ID nije GA4 format<br>
+                    • Nema dovoljno podataka u Analytics-u<br>
+                    • Pristupna prava nisu pravilno postavljena<br>
+                    • API key ili OAuth kredencijali nisu valjani
+                </p>
+                <p style="margin-top: 12px; font-size: 13px; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px;">
+                    <strong>Property ID:</strong> ${PROPERTY_ID}<br>
+                    <strong>Scope:</strong> analytics.readonly
                 </p>
             </div>
         `;
