@@ -1,245 +1,248 @@
-// Google Analytics API Configuration
-const CLIENT_ID = '1093306972763-1uld61mraqce17lquhd3mi6bf01l50cf.apps.googleusercontent.com';
-const API_KEY = 'AIzaSyC9wVrhWU9Gz8YEj5h1Hkzs5k9y2va_Qxo';
-const PROPERTY_ID = '521095907';
-const SCOPES = 'https://www.googleapis.com/auth/analytics.readonly';
+// analytics-graphs.js - Complete Firebase Analytics Implementation
 
-let tokenClient;
-let gapiInited = false;
-let gisInited = false;
+let currentUser = null;
 
-// Inicijalizacija Google API
-function gapiLoaded() {
-    gapi.load('client', initializeGapiClient);
-}
-
-async function initializeGapiClient() {
-    try {
-        await gapi.client.init({
-            apiKey: API_KEY,
-            discoveryDocs: [], // Prazan - koristimo direktan fetch
-        });
-        gapiInited = true;
-        maybeEnableButtons();
-        console.log('GAPI initialized successfully');
-    } catch (err) {
-        console.error('GAPI init error:', err);
-    }
-}
-
-function gisLoaded() {
-    tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: CLIENT_ID,
-        scope: SCOPES,
-        callback: '', // definirano kasnije
-    });
-    gisInited = true;
-    maybeEnableButtons();
-    console.log('GIS initialized successfully');
-}
-
-function maybeEnableButtons() {
-    if (gapiInited && gisInited) {
-        document.getElementById('authorize-btn').style.display = 'inline-block';
-        console.log('Authorization button enabled');
-    }
-}
-
-// OAuth 2.0 autentifikacija
-function handleAuthClick() {
-    tokenClient.callback = async (resp) => {
-        if (resp.error !== undefined) {
-            console.error('Auth error:', resp);
-            throw (resp);
-        }
-        console.log('Authorization successful');
-        document.getElementById('authorize-btn').style.display = 'none';
-        document.getElementById('signout-btn').style.display = 'inline-block';
-        await fetchAnalyticsData();
-    };
-
-    if (gapi.client.getToken() === null) {
-        tokenClient.requestAccessToken({prompt: 'consent'});
+// === AUTH STATE LISTENER ===
+window.onAuthStateChanged(window.firebaseAuth, (user) => {
+    if (user) {
+        currentUser = user;
+        document.getElementById('login-btn').style.display = 'none';
+        document.getElementById('user-info').style.display = 'flex';
+        document.getElementById('user-name').textContent = user.displayName;
+        
+        // Track login
+        trackEvent('login', { email: user.email });
+        
+        // Automatski učitaj analytics nakon logina
+        loadAnalytics();
     } else {
-        tokenClient.requestAccessToken({prompt: ''});
-    }
-}
-
-function handleSignoutClick() {
-    const token = gapi.client.getToken();
-    if (token !== null) {
-        google.accounts.oauth2.revoke(token.access_token);
-        gapi.client.setToken('');
-        document.getElementById('authorize-btn').style.display = 'inline-block';
-        document.getElementById('signout-btn').style.display = 'none';
+        currentUser = null;
+        document.getElementById('login-btn').style.display = 'inline-block';
+        document.getElementById('user-info').style.display = 'none';
         document.getElementById('analytics-content').innerHTML = '';
     }
+});
+
+// === LOGIN/LOGOUT ===
+async function loginWithGoogle() {
+    try {
+        await window.signInWithPopup(window.firebaseAuth, window.googleProvider);
+    } catch (error) {
+        console.error('Login error:', error);
+        alert('Greška pri prijavi: ' + error.message);
+    }
 }
 
-// Dohvaćanje podataka iz Google Analytics - KORISTI FETCH umjesto gapi.client
-async function fetchAnalyticsData() {
+async function logoutUser() {
+    await window.signOut(window.firebaseAuth);
+}
+
+// === EVENT TRACKING ===
+async function trackEvent(eventType, data = {}) {
+    if (!currentUser) return;
+    
     try {
-        document.getElementById('analytics-content').innerHTML = '<p>Učitavanje podataka...</p>';
-        
-        const token = gapi.client.getToken();
-        if (!token) {
-            throw new Error('No access token available');
-        }
+        await window.firestoreAddDoc(window.firestoreCollection(window.firebaseDb, 'events'), {
+            userId: currentUser.uid,
+            userName: currentUser.displayName,
+            email: currentUser.email,
+            eventType: eventType,
+            page: window.location.pathname,
+            timestamp: new Date(),
+            ...data
+        });
+        console.log('Event tracked:', eventType);
+    } catch (error) {
+        console.error('Tracking error:', error);
+    }
+}
 
-        console.log('Fetching data for Property ID:', PROPERTY_ID);
+// Track genre page visits (dodaj ovo na sve stranice)
+function trackPageView(genre = null) {
+    if (genre) {
+        trackEvent('genre_view', { genre: genre });
+    } else {
+        trackEvent('page_view');
+    }
+}
 
-        // Helper funkcija za API pozive
-        async function runReport(body) {
-            const response = await fetch(
-                `https://analyticsdata.googleapis.com/v1beta/properties/${PROPERTY_ID}:runReport`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token.access_token}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(body)
-                }
-            );
+// === LOAD ANALYTICS DATA ===
+async function loadAnalytics() {
+    if (!currentUser) {
+        document.getElementById('analytics-content').innerHTML = `
+            <div style="text-align: center; padding: 40px;">
+                <p style="font-size: 18px; color: #d0d0ff;">Prijavite se za prikaz analitike</p>
+            </div>
+        `;
+        return;
+    }
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('API Error:', response.status, errorText);
-                throw new Error(`API request failed: ${response.status}`);
-            }
+    document.getElementById('analytics-content').innerHTML = '<p>Učitavanje analitike...</p>';
 
-            return await response.json();
-        }
+    try {
+        // Dohvati SVE događaje svih korisnika
+        const eventsRef = window.firestoreCollection(window.firebaseDb, 'events');
+        const q = window.firestoreQuery(eventsRef, window.firestoreOrderBy('timestamp', 'desc'));
+        const querySnapshot = await window.firestoreGetDocs(q);
 
-        // Poziv 1: Broj korisnika po uređaju
-        const deviceData = await runReport({
-            dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],
-            dimensions: [{ name: 'deviceCategory' }],
-            metrics: [{ name: 'activeUsers' }]
+        const events = [];
+        querySnapshot.forEach((doc) => {
+            events.push({ id: doc.id, ...doc.data() });
         });
 
-        console.log('Device data:', deviceData);
+        console.log('Loaded events:', events.length);
 
-        // Poziv 2: Broj sesija po danu
-        const sessionsData = await runReport({
-            dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
-            dimensions: [{ name: 'date' }],
-            metrics: [{ name: 'sessions' }]
-        });
-
-        console.log('Sessions data:', sessionsData);
-
-        // Poziv 3: Top 5 stranica
-        const pagesData = await runReport({
-            dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],
-            dimensions: [{ name: 'pagePath' }],
-            metrics: [{ name: 'screenPageViews' }],
-            limit: 5
-        });
-
-        console.log('Pages data:', pagesData);
-
-        // Provjera ima li podataka
-        if (!deviceData.rows || deviceData.rows.length === 0) {
+        if (events.length === 0) {
             document.getElementById('analytics-content').innerHTML = `
                 <div style="background: linear-gradient(145deg, #0b0b1a, #171736); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 20px;">
-                    <h3 style="color: #ffd740; margin-bottom: 12px;">⚠️ Nema dostupnih podataka</h3>
-                    <p>Google Analytics trenutno nema podataka za prikaz. Mogući razlozi:</p>
-                    <ul style="margin-left: 20px; margin-top: 10px; color: #d0d0ff;">
-                        <li>Stranica je nova i još nema dovoljno posjeta</li>
-                        <li>GA4 tracking kod tek što je postavljen</li>
-                        <li>Podaci se još procesiraju (može trajati 24-48h)</li>
-                    </ul>
-                    <p style="margin-top: 16px; font-style: italic; color: #a5a5ff;">
-                        💡 Posjetite stranicu nekoliko puta, pričekajte par sati, pa pokušajte ponovno.
-                    </p>
+                    <h3 style="color: #ffd740;">Nema dostupnih podataka</h3>
+                    <p>Posjetite stranice s žanrovima (Classic Rock, Indie, Funk) kako biste generirali podatke za analizu.</p>
+                    <p style="margin-top: 12px;">Trenutno praćeni događaji: login, genre_view, page_view</p>
                 </div>
             `;
             return;
         }
 
-        // Vizualizacija podataka
-        displayAnalytics(deviceData, sessionsData, pagesData);
-
-    } catch (err) {
-        console.error('Fetch error:', err);
+        // Analiza podataka
+        const analytics = analyzeEvents(events);
         
+        // Vizualizacija
+        displayAnalytics(analytics, events);
+
+    } catch (error) {
+        console.error('Load analytics error:', error);
         document.getElementById('analytics-content').innerHTML = `
-            <div style="background: linear-gradient(145deg, #2d0a1f, #1a0a2d); border: 1px solid #ff4fa3; border-radius: 10px; padding: 20px; color: #ff9999;">
-                <h3 style="color: #ff4fa3; margin-bottom: 12px;">❌ Greška pri dohvaćanju podataka</h3>
-                <p><strong>Poruka:</strong> ${err.message}</p>
-                <hr style="margin: 16px 0; border-color: rgba(255,79,163,0.3);">
-                <p style="font-size: 14px; color: #d0d0ff;">
-                    <strong>Mogući uzroci:</strong><br>
-                    • Property ID nije GA4 format<br>
-                    • Nema dovoljno podataka u Analytics-u<br>
-                    • Pristupna prava nisu pravilno postavljena<br>
-                    • API key ili OAuth kredencijali nisu valjani
-                </p>
-                <p style="margin-top: 12px; font-size: 13px; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px;">
-                    <strong>Property ID:</strong> ${PROPERTY_ID}<br>
-                    <strong>Scope:</strong> analytics.readonly
-                </p>
+            <div style="background: linear-gradient(145deg, #2d0a1f, #1a0a2d); border: 1px solid #ff4fa3; border-radius: 10px; padding: 20px;">
+                <h3 style="color: #ff4fa3;">Greška pri učitavanju podataka</h3>
+                <p>${error.message}</p>
             </div>
         `;
     }
 }
 
-// Vizualizacija s Chart.js
-function displayAnalytics(deviceData, sessionsData, pagesData) {
+// === ANALYZE EVENTS ===
+function analyzeEvents(events) {
+    const analytics = {
+        totalEvents: events.length,
+        uniqueUsers: new Set(events.map(e => e.userId)).size,
+        genreViews: {},
+        userActivity: {},
+        eventsByType: {},
+        dailyActivity: {}
+    };
+
+    events.forEach(event => {
+        // Genre views
+        if (event.eventType === 'genre_view' && event.genre) {
+            analytics.genreViews[event.genre] = (analytics.genreViews[event.genre] || 0) + 1;
+        }
+
+        // Event types
+        analytics.eventsByType[event.eventType] = (analytics.eventsByType[event.eventType] || 0) + 1;
+
+        // User activity
+        if (!analytics.userActivity[event.userId]) {
+            analytics.userActivity[event.userId] = {
+                name: event.userName || 'Unknown',
+                email: event.email || '',
+                events: 0,
+                genres: []
+            };
+        }
+        analytics.userActivity[event.userId].events++;
+        if (event.genre && !analytics.userActivity[event.userId].genres.includes(event.genre)) {
+            analytics.userActivity[event.userId].genres.push(event.genre);
+        }
+
+        // Daily activity
+        const date = new Date(event.timestamp.seconds * 1000).toLocaleDateString('hr-HR');
+        analytics.dailyActivity[date] = (analytics.dailyActivity[date] || 0) + 1;
+    });
+
+    return analytics;
+}
+
+// === DISPLAY ANALYTICS ===
+function displayAnalytics(analytics, events) {
     const contentDiv = document.getElementById('analytics-content');
+    
     contentDiv.innerHTML = `
+        <div style="margin-bottom: 24px;">
+            <h3 style="margin-bottom: 16px;">Pregled aktivnosti</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px;">
+                <div class="info-block">
+                    <h4>Ukupno događaja</h4>
+                    <p style="font-size: 32px; font-weight: bold; color: #7b5cff;">${analytics.totalEvents}</p>
+                </div>
+                <div class="info-block">
+                    <h4>Jedinstvenih korisnika</h4>
+                    <p style="font-size: 32px; font-weight: bold; color: #ff4fa3;">${analytics.uniqueUsers}</p>
+                </div>
+                <div class="info-block">
+                    <h4>Pregleda žanrova</h4>
+                    <p style="font-size: 32px; font-weight: bold; color: #4fc3f7;">${Object.values(analytics.genreViews).reduce((a, b) => a + b, 0)}</p>
+                </div>
+            </div>
+        </div>
+
         <div class="analytics-grid">
             <div class="chart-container">
-                <h3>Korisnici po uređajima (30 dana)</h3>
-                <canvas id="deviceChart"></canvas>
+                <h3>Pregledi po žanrovima</h3>
+                <canvas id="genreChart"></canvas>
             </div>
             <div class="chart-container">
-                <h3>Sesije po danima (7 dana)</h3>
-                <canvas id="sessionsChart"></canvas>
+                <h3>Aktivnost po danima</h3>
+                <canvas id="dailyChart"></canvas>
             </div>
             <div class="chart-container">
-                <h3>Top 5 najposjećenijih stranica</h3>
-                <canvas id="pagesChart"></canvas>
+                <h3>Tipovi događaja</h3>
+                <canvas id="eventTypeChart"></canvas>
             </div>
+        </div>
+
+        <div style="margin-top: 32px;">
+            <h3>👥 Aktivnost korisnika</h3>
+            <div id="user-activity-list" style="margin-top: 16px;"></div>
+        </div>
+
+        <div style="margin-top: 32px;">
+            <h3>🎵 Preporuke za tebe</h3>
+            <div id="recommendations" style="margin-top: 16px;"></div>
         </div>
     `;
 
-    // Graf 1: Pie chart za uređaje
-    const deviceLabels = deviceData.rows.map(row => row.dimensionValues[0].value);
-    const deviceValues = deviceData.rows.map(row => parseInt(row.metricValues[0].value));
-
-    new Chart(document.getElementById('deviceChart'), {
-        type: 'pie',
-        data: {
-            labels: deviceLabels,
-            datasets: [{
-                data: deviceValues,
-                backgroundColor: ['#7b5cff', '#ff4fa3', '#4fc3f7', '#ffd740']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { labels: { color: '#f5f5f5' } }
+    // Chart 1: Genre views (Bar chart)
+    if (Object.keys(analytics.genreViews).length > 0) {
+        new Chart(document.getElementById('genreChart'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(analytics.genreViews),
+                datasets: [{
+                    label: 'Broj pregleda',
+                    data: Object.values(analytics.genreViews),
+                    backgroundColor: ['#7b5cff', '#ff4fa3', '#4fc3f7']
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true, ticks: { color: '#f5f5f5' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                    x: { ticks: { color: '#f5f5f5' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                },
+                plugins: { legend: { labels: { color: '#f5f5f5' } } }
             }
-        }
-    });
+        });
+    }
 
-    // Graf 2: Line chart za sesije
-    const sessionLabels = sessionsData.rows.map(row => {
-        const date = row.dimensionValues[0].value;
-        return `${date.slice(6,8)}.${date.slice(4,6)}.`;
-    });
-    const sessionValues = sessionsData.rows.map(row => parseInt(row.metricValues[0].value));
-
-    new Chart(document.getElementById('sessionsChart'), {
+    // Chart 2: Daily activity (Line chart)
+    const sortedDates = Object.keys(analytics.dailyActivity).sort();
+    new Chart(document.getElementById('dailyChart'), {
         type: 'line',
         data: {
-            labels: sessionLabels,
+            labels: sortedDates,
             datasets: [{
-                label: 'Sesije',
-                data: sessionValues,
+                label: 'Aktivnost',
+                data: sortedDates.map(date => analytics.dailyActivity[date]),
                 borderColor: '#7b5cff',
                 backgroundColor: 'rgba(123, 92, 255, 0.1)',
                 tension: 0.3,
@@ -249,53 +252,97 @@ function displayAnalytics(deviceData, sessionsData, pagesData) {
         options: {
             responsive: true,
             scales: {
-                y: { 
-                    beginAtZero: true,
-                    ticks: { color: '#f5f5f5' },
-                    grid: { color: 'rgba(255,255,255,0.1)' }
-                },
-                x: { 
-                    ticks: { color: '#f5f5f5' },
-                    grid: { color: 'rgba(255,255,255,0.1)' }
-                }
+                y: { beginAtZero: true, ticks: { color: '#f5f5f5' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                x: { ticks: { color: '#f5f5f5' }, grid: { color: 'rgba(255,255,255,0.1)' } }
             },
-            plugins: {
-                legend: { labels: { color: '#f5f5f5' } }
-            }
+            plugins: { legend: { labels: { color: '#f5f5f5' } } }
         }
     });
 
-    // Graf 3: Bar chart za stranice
-    const pageLabels = pagesData.rows.map(row => row.dimensionValues[0].value);
-    const pageValues = pagesData.rows.map(row => parseInt(row.metricValues[0].value));
-
-    new Chart(document.getElementById('pagesChart'), {
-        type: 'bar',
+    // Chart 3: Event types (Pie chart)
+    new Chart(document.getElementById('eventTypeChart'), {
+        type: 'pie',
         data: {
-            labels: pageLabels,
+            labels: Object.keys(analytics.eventsByType),
             datasets: [{
-                label: 'Broj pregleda',
-                data: pageValues,
-                backgroundColor: '#ff4fa3'
+                data: Object.values(analytics.eventsByType),
+                backgroundColor: ['#7b5cff', '#ff4fa3', '#4fc3f7', '#ffd740']
             }]
         },
         options: {
             responsive: true,
-            indexAxis: 'y', // Horizontalni bar chart
-            scales: {
-                y: { 
-                    ticks: { color: '#f5f5f5' },
-                    grid: { color: 'rgba(255,255,255,0.1)' }
-                },
-                x: { 
-                    beginAtZero: true,
-                    ticks: { color: '#f5f5f5' },
-                    grid: { color: 'rgba(255,255,255,0.1)' }
-                }
-            },
-            plugins: {
-                legend: { labels: { color: '#f5f5f5' } }
-            }
+            plugins: { legend: { labels: { color: '#f5f5f5' } } }
         }
     });
+
+    // User activity list
+    const userActivityHtml = Object.entries(analytics.userActivity)
+        .sort((a, b) => b[1].events - a[1].events)
+        .slice(0, 5)
+        .map(([userId, data]) => `
+            <div class="info-block" style="margin-bottom: 12px;">
+                <h4>${data.name}</h4>
+                <p><strong>${data.events}</strong> događaja • Žanrovi: ${data.genres.join(', ') || 'Nema'}</p>
+            </div>
+        `).join('');
+    
+    document.getElementById('user-activity-list').innerHTML = userActivityHtml || '<p>Nema podataka o aktivnosti korisnika.</p>';
+
+    // Recommendations (basic content-based)
+    generateRecommendations(analytics, events);
+}
+
+// === GENERATE RECOMMENDATIONS ===
+function generateRecommendations(analytics, events) {
+    if (!currentUser) return;
+
+    // Get current user's genre preferences
+    const userEvents = events.filter(e => e.userId === currentUser.uid && e.eventType === 'genre_view');
+    const genreCounts = {};
+    
+    userEvents.forEach(event => {
+        if (event.genre) {
+            genreCounts[event.genre] = (genreCounts[event.genre] || 0) + 1;
+        }
+    });
+
+    const sortedGenres = Object.entries(genreCounts).sort((a, b) => b[1] - a[1]);
+
+    let recommendationsHtml = '';
+
+    if (sortedGenres.length === 0) {
+        recommendationsHtml = `
+            <div class="info-block">
+                <p>Posjetite stranice s žanrovima kako biste dobili personalizirane preporuke!</p>
+            </div>
+        `;
+    } else {
+        const topGenre = sortedGenres[0][0];
+        const recommendations = {
+            'classic_rock': {
+                title: 'Led Zeppelin - Stairway to Heaven',
+                reason: 'Temeljem tvoje ljubavi prema Classic Rock-u'
+            },
+            'indie': {
+                title: 'Arctic Monkeys - Do I Wanna Know?',
+                reason: 'Slično indie bendu koji si nedavno pregledao'
+            },
+            'funk': {
+                title: 'Parliament - Flash Light',
+                reason: 'Funky vibe koji voliš'
+            }
+        };
+
+        const rec = recommendations[topGenre] || recommendations['classic_rock'];
+        
+        recommendationsHtml = `
+            <div class="info-block">
+                <h4>🎵 ${rec.title}</h4>
+                <p style="color: #a5a5ff; font-style: italic;">${rec.reason}</p>
+                <p style="margin-top: 8px;"><strong>Najčešće slušaš:</strong> ${topGenre}</p>
+            </div>
+        `;
+    }
+
+    document.getElementById('recommendations').innerHTML = recommendationsHtml;
 }

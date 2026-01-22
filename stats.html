@@ -1,30 +1,25 @@
 <!DOCTYPE html>
 <html lang="hr">
-
 <head>
     <meta charset="UTF-8">
-    <title>Statistike | World of Music</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistike | World of Music</title>
     <link rel="stylesheet" href="css/style.css">
-    <!-- D3.js koristeći UMD -->
-    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-
+    
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-SFV395CDMW"></script>
     <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-SFV395CDMW');
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-SFV395CDMW');
     </script>
 </head>
-
 <body class="dark-theme">
     <header class="site-header">
         <a href="index.html" class="logo">World of Music</a>
         <nav class="nav">
-            <button class="nav-toggle" aria-label="Otvori navigaciju">
+            <button class="nav-toggle" aria-label="Toggle navigation">
                 <span></span><span></span><span></span>
             </button>
             <ul class="nav-links">
@@ -39,86 +34,80 @@
     </header>
 
     <main>
-        <section class="page-header">
-            <h1>Statistike slušanja</h1>
-        </section>
+        <div class="page-header">
+            <h1>📊 Analitika i Statistike</h1>
+            <p>Analiza ponašanja korisnika i personalizirane preporuke</p>
+        </div>
 
+        <!-- Auth Section -->
         <section class="section">
-            <h3 style="margin-top: 32px;">Vizualizacija po žanrovima</h3>
-            <p class="section-intro">
-                Graf prikazuje broj mojih omiljenih pjesama na Spotifyju po svakom od ova tri žanra.
-            </p>
-
-            <div id="genre-chart" class="chart-container"></div>
-
-            <h3 style="margin-top: 32px;">Vizualizacija po vremenu slušanja</h3>
-            <p class="section-intro">
-                Donut graf prikazuje otprilike kada najčešće slušam glazbu.
-            </p>
-            <div id="context-chart" class="chart-container"></div>
-
-        </section>
-
-        <!-- NOVA SEKCIJA: Google Analytics -->
-        <section class="section">
-            <h2>📊 Google Analytics Integracija</h2>
-            <p class="section-intro">
-                Ovdje možete vidjeti podatke o ponašanju korisnika prikupljene pomoću Google Analytics API-ja.
-            </p>
-
-            <div class="analytics-controls" style="margin-bottom: 24px;">
-                <button id="authorize-btn" class="btn-primary" onclick="handleAuthClick()" style="display: none;">
-                    Prijavi se s Google Analytics
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
+                <button id="login-btn" class="btn-primary" onclick="loginWithGoogle()">
+                    🔐 Prijavi se s Googleom
                 </button>
-                <button id="signout-btn" class="btn-primary" onclick="handleSignoutClick()" style="display: none;">
-                    Odjavi se
-                </button>
+                
+                <div id="user-info" style="display: none; align-items: center; gap: 12px;">
+                    <span id="user-name" style="color: #d0d0ff;"></span>
+                    <button class="btn-primary" onclick="logoutUser()" style="background: linear-gradient(135deg, #ff4fa3, #7b5cff);">
+                        Odjavi se
+                    </button>
+                </div>
             </div>
 
-            <div id="analytics-content"></div>
+            <div id="analytics-content">
+                <div style="text-align: center; padding: 40px;">
+                    <p style="font-size: 18px; color: #d0d0ff;">Prijavite se za prikaz analitike</p>
+                </div>
+            </div>
         </section>
     </main>
 
     <footer class="site-footer">
-        <p class="footer-copy">&copy; 2025 World of Music. Sva prava pridržana.</p>
         <nav class="social-nav">
             <ul class="social-list">
-                <li onclick="leavingPage()">
-                    <a title="Facebook" href="https://www.facebook.com" target="_blank">
-                        <img src="img/logo_facebook.png" alt="Facebook">
-                    </a>
-                </li>
-                <li onclick="leavingPage()">
-                    <a title="Instagram" href="https://www.instagram.com" target="_blank">
-                        <img src="img/logo_instagram.png" alt="Instagram">
-                    </a>
-                </li>
-                <li onclick="leavingPage()">
-                    <a title="TikTok" href="https://www.tiktok.com" target="_blank">
-                        <img src="img/logo_tiktok.png" alt="TikTok">
-                    </a>
-                </li>
-                <li onclick="leavingPage()">
-                    <a title="Spotify" href="https://open.spotify.com" target="_blank">
-                        <img src="img/logo_spotify.png" alt="Spotify">
-                    </a>
-                </li>
+                <li><a href="#"><img src="img/instagram-icon.svg" alt="Instagram"></a></li>
+                <li><a href="#"><img src="img/x-icon.svg" alt="X (Twitter)"></a></li>
+                <li><a href="#"><img src="img/spotify-icon.svg" alt="Spotify"></a></li>
             </ul>
         </nav>
+        <p class="footer-copy">&copy; 2026 World of Music. All rights reserved.</p>
     </footer>
 
-    <script src="js/script.js"></script>
-    <script src="js/d3-graph.js"></script>
-
-    <!-- Chart.js library -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Google API libraries -->
-    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
-    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
-    
-    <!-- Analytics script -->
-    <script src="js/analytics-graphs.js"></script>
-</body>
 
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, addDoc, query, where, getDocs, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // ZAMIJENI sa svojim Firebase config!
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY_HERE",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        window.firebaseAuth = getAuth(app);
+        window.firebaseDb = getFirestore(app);
+        window.googleProvider = new GoogleAuthProvider();
+        window.signInWithPopup = signInWithPopup;
+        window.signOut = signOut;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.firestoreAddDoc = addDoc;
+        window.firestoreCollection = collection;
+        window.firestoreQuery = query;
+        window.firestoreWhere = where;
+        window.firestoreGetDocs = getDocs;
+        window.firestoreOrderBy = orderBy;
+    </script>
+
+    <script src="js/analytics-graphs.js"></script>
+    <script src="js/script.js"></script>
+</body>
 </html>
