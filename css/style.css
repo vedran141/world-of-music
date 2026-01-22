@@ -421,3 +421,47 @@ p {
     color: #ccccff;
     font-style: italic;
 }
+
+/* ===== Google Analytics Section ===== */
+.analytics-controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+#analytics-content {
+    min-height: 100px;
+}
+
+#analytics-content p {
+    font-size: 16px;
+    color: #d0d0ff;
+}
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 24px;
+}
+
+/* 2 stupca na srednjim ekranima */
+@media (min-width: 768px) {
+    .analytics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* 3 stupca na velikim ekranima */
+@media (min-width: 1100px) {
+    .analytics-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Chart.js canvas responsive */
+.analytics-grid canvas {
+    max-height: 350px;
+}
+

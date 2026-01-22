@@ -58,6 +58,25 @@
             <div id="context-chart" class="chart-container"></div>
 
         </section>
+
+        <!-- NOVA SEKCIJA: Google Analytics -->
+        <section class="section">
+            <h2>📊 Google Analytics Integracija</h2>
+            <p class="section-intro">
+                Ovdje možete vidjeti podatke o ponašanju korisnika prikupljene pomoću Google Analytics API-ja.
+            </p>
+
+            <div class="analytics-controls" style="margin-bottom: 24px;">
+                <button id="authorize-btn" class="btn-primary" onclick="handleAuthClick()" style="display: none;">
+                    Prijavi se s Google Analytics
+                </button>
+                <button id="signout-btn" class="btn-primary" onclick="handleSignoutClick()" style="display: none;">
+                    Odjavi se
+                </button>
+            </div>
+
+            <div id="analytics-content"></div>
+        </section>
     </main>
 
     <footer class="site-footer">
@@ -90,6 +109,16 @@
 
     <script src="js/script.js"></script>
     <script src="js/d3-graph.js"></script>
+
+    <!-- Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Google API libraries -->
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+    
+    <!-- Analytics script -->
+    <script src="js/analytics.js"></script>
 </body>
 
 </html>
