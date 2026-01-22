@@ -63,14 +63,31 @@
     </main>
 
     <footer class="site-footer">
+        <p class="footer-copy">&copy; 2025 World of Music. Sva prava pridržana.</p>
         <nav class="social-nav">
             <ul class="social-list">
-                <li><a href="#"><img src="img/instagram-icon.svg" alt="Instagram"></a></li>
-                <li><a href="#"><img src="img/x-icon.svg" alt="X (Twitter)"></a></li>
-                <li><a href="#"><img src="img/spotify-icon.svg" alt="Spotify"></a></li>
+                <li onclick="leavingPage()">
+                    <a title="Facebook" href="https://www.facebook.com" target="_blank">
+                        <img src="img/logo_facebook.png" alt="Facebook">
+                    </a>
+                </li>
+                <li onclick="leavingPage()">
+                    <a title="Instagram" href="https://www.instagram.com" target="_blank">
+                        <img src="img/logo_instagram.png" alt="Instagram">
+                    </a>
+                </li>
+                <li onclick="leavingPage()">
+                    <a title="TikTok" href="https://www.tiktok.com" target="_blank">
+                        <img src="img/logo_tiktok.png" alt="TikTok">
+                    </a>
+                </li>
+                <li onclick="leavingPage()">
+                    <a title="Spotify" href="https://open.spotify.com" target="_blank">
+                        <img src="img/logo_spotify.png" alt="Spotify">
+                    </a>
+                </li>
             </ul>
         </nav>
-        <p class="footer-copy">&copy; 2026 World of Music. All rights reserved.</p>
     </footer>
 
     <!-- Chart.js -->
@@ -82,14 +99,15 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getFirestore, collection, addDoc, query, where, getDocs, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-        // ZAMIJENI sa svojim Firebase config!
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY_HERE",
-            authDomain: "YOUR_PROJECT.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyCjaUfUA-ajiNnn2mYG5wU0pgZ6ed7hqoo",
+        authDomain: "world-of-music-bf40b.firebaseapp.com",
+        projectId: "world-of-music-bf40b",
+        storageBucket: "world-of-music-bf40b.firebasestorage.app",
+        messagingSenderId: "818371763545",
+        appId: "1:818371763545:web:56f67df820812b14bd8048",
+        measurementId: "G-JJZCQ4FX81"
         };
 
         const app = initializeApp(firebaseConfig);
