@@ -17,6 +17,7 @@
         gtag('config', 'G-SFV395CDMW');
     </script>
 </head>
+
 <body class="dark-theme">
     <header class="site-header">
         <a href="index.html" class="logo">World of Music</a>
@@ -36,10 +37,9 @@
     </header>
 
     <main>
-        <div class="page-header">
-            <h1>Statistike i analitika</h1>
-            <p>Analiza ponašanja korisnika i personalizirane preporuke</p>
-        </div>
+        <section class="page-header">
+            <h1>Statistike slušanja</h1>
+        </section>
 
         <section class="section">
             <h3 style="margin-top: 32px;">Vizualizacija po žanrovima</h3>
@@ -111,7 +111,7 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Firebase SDKs - PRVO! -->
+    <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
@@ -145,12 +145,12 @@
         window.firestoreGetDocs = getDocs;
         window.firestoreOrderBy = orderBy;
 
-        // SADA učitaj analytics-graphs.js NAKON što je Firebase spreman
         const script = document.createElement('script');
         script.src = 'js/analytics-graphs.js';
         document.body.appendChild(script);
     </script>
 
     <script src="js/script.js"></script>
+    <script src="js/d3-graph.js"></script>
 </body>
 </html>
