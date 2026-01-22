@@ -146,14 +146,42 @@
         </nav>
     </footer>
 
-    <script src="js/script.js"></script>
+    <!-- Firebase tracking -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-    <script>
-        // Track genre view
-        if (typeof trackPageView === 'function') {
-            trackPageView('indie'); // ili 'classic_rock' ili 'funk'
-        }
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjaUfUA-ajiNnn2mYG5wU0pgZ6ed7hqoo",
+            authDomain: "world-of-music-bf40b.firebaseapp.com",
+            projectId: "world-of-music-bf40b",
+            storageBucket: "world-of-music-bf40b.firebasestorage.app",
+            messagingSenderId: "818371763545",
+            appId: "1:818371763545:web:56f67df820812b14bd8048"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                await addDoc(collection(db, 'events'), {
+                    userId: user.uid,
+                    userName: user.displayName,
+                    email: user.email,
+                    eventType: 'genre_view',
+                    genre: 'classic_rock',
+                    page: window.location.pathname,
+                    timestamp: new Date()
+                });
+                console.log('Tracked: classic_rock page view');
+            }
+        });
     </script>
+
+    <script src="js/script.js"></script>
 </body>
 
 </html>

@@ -201,12 +201,7 @@ function displayAnalytics(analytics, events) {
         </div>
 
         <div style="margin-top: 32px;">
-            <h3>👥 Aktivnost korisnika</h3>
-            <div id="user-activity-list" style="margin-top: 16px;"></div>
-        </div>
-
-        <div style="margin-top: 32px;">
-            <h3>🎵 Preporuke za tebe</h3>
+            <h3>Preporuke za tebe</h3>
             <div id="recommendations" style="margin-top: 16px;"></div>
         </div>
     `;
@@ -275,19 +270,6 @@ function displayAnalytics(analytics, events) {
         }
     });
 
-    // User activity list
-    const userActivityHtml = Object.entries(analytics.userActivity)
-        .sort((a, b) => b[1].events - a[1].events)
-        .slice(0, 5)
-        .map(([userId, data]) => `
-            <div class="info-block" style="margin-bottom: 12px;">
-                <h4>${data.name}</h4>
-                <p><strong>${data.events}</strong> događaja • Žanrovi: ${data.genres.join(', ') || 'Nema'}</p>
-            </div>
-        `).join('');
-    
-    document.getElementById('user-activity-list').innerHTML = userActivityHtml || '<p>Nema podataka o aktivnosti korisnika.</p>';
-
     // Recommendations (basic content-based)
     generateRecommendations(analytics, events);
 }
@@ -337,7 +319,7 @@ function generateRecommendations(analytics, events) {
         
         recommendationsHtml = `
             <div class="info-block">
-                <h4>🎵 ${rec.title}</h4>
+                <h4>${rec.title}</h4>
                 <p style="color: #a5a5ff; font-style: italic;">${rec.reason}</p>
                 <p style="margin-top: 8px;"><strong>Najčešće slušaš:</strong> ${topGenre}</p>
             </div>
