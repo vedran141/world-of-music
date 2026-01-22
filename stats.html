@@ -59,24 +59,23 @@
 
         </section>
 
-        <!-- NOVA SEKCIJA: Google Analytics -->
-        <section class="section">
-            <h2>📊 Google Analytics Integracija</h2>
-            <p class="section-intro">
-                Ovdje možete vidjeti podatke o ponašanju korisnika prikupljene pomoću Google Analytics API-ja.
+        <!-- Google Analytics API (bez OAuth) -->
+        <section class="section" style="margin-top: 48px;">
+            <h2>📊 Google Analytics - Podaci o posjećenosti</h2>
+            <p class="section-intro" style="max-width: 800px;">
+                Ovaj dio prikazuje <strong>stvarne podatke</strong> s Google Analytics API-ja o ponašanju korisnika na ovoj stranici. 
+                Podaci se dohvaćaju putem backend Service Account autentifikacije.
             </p>
 
-            <div class="analytics-controls" style="margin-bottom: 24px;">
-                <button id="authorize-btn" class="btn-primary" onclick="handleAuthClick()" style="display: none;">
-                    Prijavi se s Google Analytics
-                </button>
-                <button id="signout-btn" class="btn-primary" onclick="handleSignoutClick()" style="display: none;">
-                    Odjavi se
+            <div style="margin-bottom: 24px;">
+                <button id="load-analytics-btn" class="btn-primary" onclick="fetchAnalyticsData()">
+                    📊 Prikaži Analytics podatke
                 </button>
             </div>
 
             <div id="analytics-content"></div>
         </section>
+
     </main>
 
     <footer class="site-footer">
@@ -113,12 +112,8 @@
     <!-- Chart.js library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- Google API libraries -->
-    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
-    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
-    
     <!-- Analytics script -->
-    <script src="js/analytics.js"></script>
+    <script src="js/analytics-graphs.js"></script>
 </body>
 
 </html>
