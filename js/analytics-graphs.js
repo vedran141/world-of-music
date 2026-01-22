@@ -1,8 +1,5 @@
-// analytics-graphs.js - Complete Firebase Analytics Implementation
-
 let currentUser = null;
 
-// === AUTH STATE LISTENER ===
 window.onAuthStateChanged(window.firebaseAuth, (user) => {
     if (user) {
         currentUser = user;
@@ -10,10 +7,10 @@ window.onAuthStateChanged(window.firebaseAuth, (user) => {
         document.getElementById('user-info').style.display = 'flex';
         document.getElementById('user-name').textContent = user.displayName;
         
-        // Track login
+        // Trackanje prijave
         trackEvent('login', { email: user.email });
         
-        // Automatski učitaj analytics nakon logina
+        // Automatski učitava analitiku nakon prijave
         loadAnalytics();
     } else {
         currentUser = null;
@@ -23,7 +20,7 @@ window.onAuthStateChanged(window.firebaseAuth, (user) => {
     }
 });
 
-// === LOGIN/LOGOUT ===
+// Login/logout
 async function loginWithGoogle() {
     try {
         await window.signInWithPopup(window.firebaseAuth, window.googleProvider);
@@ -37,7 +34,7 @@ async function logoutUser() {
     await window.signOut(window.firebaseAuth);
 }
 
-// === EVENT TRACKING ===
+// Trackanje događaja
 async function trackEvent(eventType, data = {}) {
     if (!currentUser) return;
     
@@ -57,7 +54,7 @@ async function trackEvent(eventType, data = {}) {
     }
 }
 
-// Track genre page visits (dodaj ovo na sve stranice)
+// Trackanje posjeta
 function trackPageView(genre = null) {
     if (genre) {
         trackEvent('genre_view', { genre: genre });
@@ -66,7 +63,7 @@ function trackPageView(genre = null) {
     }
 }
 
-// === LOAD ANALYTICS DATA ===
+// Učitavanje analitike
 async function loadAnalytics() {
     if (!currentUser) {
         document.getElementById('analytics-content').innerHTML = `
@@ -120,7 +117,7 @@ async function loadAnalytics() {
     }
 }
 
-// === ANALYZE EVENTS ===
+// Analiza
 function analyzeEvents(events) {
     const analytics = {
         totalEvents: events.length,
@@ -132,15 +129,15 @@ function analyzeEvents(events) {
     };
 
     events.forEach(event => {
-        // Genre views
+        // Pregledi žanrova
         if (event.eventType === 'genre_view' && event.genre) {
             analytics.genreViews[event.genre] = (analytics.genreViews[event.genre] || 0) + 1;
         }
 
-        // Event types
+        // Tipovi događaja
         analytics.eventsByType[event.eventType] = (analytics.eventsByType[event.eventType] || 0) + 1;
 
-        // User activity
+        // Korisnička aktivnost
         if (!analytics.userActivity[event.userId]) {
             analytics.userActivity[event.userId] = {
                 name: event.userName || 'Unknown',
@@ -154,7 +151,7 @@ function analyzeEvents(events) {
             analytics.userActivity[event.userId].genres.push(event.genre);
         }
 
-        // Daily activity
+        // Dnevna aktivnost
         const date = new Date(event.timestamp.seconds * 1000).toLocaleDateString('hr-HR');
         analytics.dailyActivity[date] = (analytics.dailyActivity[date] || 0) + 1;
     });
@@ -162,7 +159,7 @@ function analyzeEvents(events) {
     return analytics;
 }
 
-// === DISPLAY ANALYTICS ===
+// Prikaz analitike
 function displayAnalytics(analytics, events) {
     const contentDiv = document.getElementById('analytics-content');
     
@@ -206,7 +203,7 @@ function displayAnalytics(analytics, events) {
         </div>
     `;
 
-    // Chart 1: Genre views (Bar chart)
+    // Graf 1: Pregledi po žanrovima
     if (Object.keys(analytics.genreViews).length > 0) {
         new Chart(document.getElementById('genreChart'), {
             type: 'bar',
@@ -229,7 +226,7 @@ function displayAnalytics(analytics, events) {
         });
     }
 
-    // Chart 2: Daily activity (Line chart)
+    // Graf 2: Aktivnost po danima
     const sortedDates = Object.keys(analytics.dailyActivity).sort();
     new Chart(document.getElementById('dailyChart'), {
         type: 'line',
@@ -254,7 +251,7 @@ function displayAnalytics(analytics, events) {
         }
     });
 
-    // Chart 3: Event types (Pie chart)
+    // Graf 3: Tipovi događaja
     new Chart(document.getElementById('eventTypeChart'), {
         type: 'pie',
         data: {
@@ -270,11 +267,10 @@ function displayAnalytics(analytics, events) {
         }
     });
 
-    // Recommendations (basic content-based)
     generateRecommendations(analytics, events);
 }
 
-// === GENERATE RECOMMENDATIONS ===
+// Preporuke
 function generateRecommendations(analytics, events) {
     if (!currentUser) return;
 
@@ -303,11 +299,11 @@ function generateRecommendations(analytics, events) {
         const recommendations = {
             'classic_rock': {
                 title: 'Led Zeppelin - Stairway to Heaven',
-                reason: 'Temeljem tvoje ljubavi prema Classic Rock-u'
+                reason: 'Na temelju tvoje ljubavi prema classic rock-u'
             },
             'indie': {
                 title: 'Arctic Monkeys - Do I Wanna Know?',
-                reason: 'Slično indie bendu koji si nedavno pregledao'
+                reason: 'Slično indie bendu kojeg si nedavno slušao'
             },
             'funk': {
                 title: 'Parliament - Flash Light',

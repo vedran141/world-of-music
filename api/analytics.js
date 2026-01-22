@@ -1,4 +1,3 @@
-// api/analytics.js
 const { google } = require('googleapis');
 
 module.exports = async (req, res) => {
