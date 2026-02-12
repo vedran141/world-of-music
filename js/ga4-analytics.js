@@ -186,10 +186,7 @@ function displayGA4Analytics(deviceData, sessionsData, pagesData, totalUsersData
                 <h3>Korisnici po uređajima</h3>
                 <canvas id="ga4DeviceChart"></canvas>
             </div>
-            <div class="chart-container">
-                <h3>Sesije po danima (7 dana)</h3>
-                <canvas id="ga4SessionsChart"></canvas>
-            </div>
+            
             <div class="chart-container">
                 <h3>Top stranice</h3>
                 <canvas id="ga4PagesChart"></canvas>
@@ -218,32 +215,7 @@ function displayGA4Analytics(deviceData, sessionsData, pagesData, totalUsersData
         }
     });
 
-    // Graf 2: Line chart - sesije
-    new Chart(document.getElementById('ga4SessionsChart'), {
-        type: 'line',
-        data: {
-            labels: sessionsData.rows.map(row => {
-                const date = row.dimensionValues[0].value;
-                return `${date.slice(6,8)}.${date.slice(4,6)}.`;
-            }),
-            datasets: [{
-                label: 'Sesije',
-                data: sessionsData.rows.map(row => parseInt(row.metricValues[0].value)),
-                borderColor: '#7b5cff',
-                backgroundColor: 'rgba(123, 92, 255, 0.1)',
-                tension: 0.3,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: { beginAtZero: true, ticks: { color: '#f5f5f5' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                x: { ticks: { color: '#f5f5f5' }, grid: { color: 'rgba(255,255,255,0.1)' } }
-            },
-            plugins: { legend: { labels: { color: '#f5f5f5' } } }
-        }
-    });
+    
 
     // Graf 3: Horizontal bar chart - stranice
     new Chart(document.getElementById('ga4PagesChart'), {
