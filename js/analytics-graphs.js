@@ -105,6 +105,7 @@ async function loadAnalytics() {
         
         // Vizualizacija
         displayAnalytics(analytics, events);
+        displayAdvancedAnalytics(events);
 
     } catch (error) {
         console.error('Load analytics error:', error);
@@ -268,8 +269,6 @@ function displayAnalytics(analytics, events) {
     });
 
     generateRecommendations(analytics, events);
-
-    displayAdvancedAnalytics(events);
 }
 
 // Preporuke
