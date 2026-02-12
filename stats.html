@@ -79,9 +79,32 @@
             </div>
         </section>
 
+        <!-- NOVA SEKCIJA: Google Analytics 4 Dashboard -->
+        <section class="section" style="margin-top: 48px;">
+            <h2>📊 Google Analytics 4 - Službeni podaci</h2>
+            <p class="section-intro">
+                Podaci dohvaćeni direktno iz Google Analytics putem Analytics Data API i OAuth 2.0 autentifikacije.
+            </p>
+
+            <div style="margin-bottom: 24px;">
+                <button id="ga4-authorize-btn" class="btn-primary" onclick="handleGA4AuthClick()" style="display: none;">
+                    🔐 Autoriziraj Google Analytics pristup
+                </button>
+                <button id="ga4-signout-btn" class="btn-primary" onclick="handleGA4SignoutClick()" style="display: none;">
+                    🚪 Odjavi se
+                </button>
+            </div>
+
+            <div id="ga4-analytics-content">
+                <div style="text-align: center; padding: 40px;">
+                    <p style="font-size: 18px; color: #d0d0ff;">Klikni "Autoriziraj" za prikaz Google Analytics podataka</p>
+                </div>
+            </div>
+        </section>
+
         <!-- NOVA SEKCIJA: Napredne analize -->
         <section class="section" style="margin-top: 48px; border-top: 2px solid rgba(123, 92, 255, 0.3); padding-top: 48px;">
-            <h2>📈 Napredne analize ponašanja korisnika</h2>
+            <h2>Napredne analize ponašanja korisnika</h2>
             <p class="section-intro">
                 Retention i path analize temeljene na događajima.
             </p>
@@ -162,6 +185,13 @@
         script.src = 'js/analytics-graphs.js';
         document.body.appendChild(script);
     </script>
+
+    <!-- Google Analytics 4 API libraries -->
+    <script async defer src="https://apis.google.com/js/api.js" onload="ga4GapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="ga4GisLoaded()"></script>
+
+    <!-- GA4 Analytics script -->
+    <script src="js/ga4-analytics.js"></script>
 
     <script src="js/script.js"></script>
     <script src="js/d3-graph.js"></script>

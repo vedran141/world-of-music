@@ -440,11 +440,11 @@ function displayRetention(data) {
             
             <h4 style="margin-top: 12px;">UX implikacije:</h4>
             <p>${data.day1Retention < 20 ? 
-                'Nizak Day 1 retention sugerira potrebu za boljim onboardingom i engagement mehanizmima (npr. personalizirane notifikacije).' : 
+                'Nizak Day 1 retention sugerira potrebu za boljim engagement mehanizmima (npr. personalizirane notifikacije).' : 
                 'Dobar Day 1 retention pokazuje da korisnici nalaze vrijednost u aplikaciji odmah.'
             }</p>
             <p>${data.day7Retention < 10 ? 
-                'Nizak Day 7 retention ukazuje na potrebu za dodavanjem sadržaja koji potiče povratke (npr. novi žanrovi, playlist preporuke).' : 
+                'Nizak Day 7 retention ukazuje na potrebu za dodavanjem sadržaja koji potiče povratke (npr. preporuke playlisti).' : 
                 'Solidna dugoročna retention vrijednost.'
             }</p>
         </div>
@@ -508,10 +508,10 @@ function displayPathAnalysis(data) {
 
         <div class="info-block" style="margin-top: 24px; background: linear-gradient(145deg, #0b0b1a, #171736);">
             <h4>Interpretacija:</h4>
-            <p>Najčešća putanja pokazuje tipično ponašanje korisnika pri istraživanju stranice. Većina korisnika kreće s home stranice i ide prema žanrovima.</p>
+            <p>Najčešća putanja pokazuje tipično ponašanje korisnika pri istraživanju stranice. Većina korisnika kreće na stranicu sa statistikama i ide prema žanrovima.</p>
             
             <h4 style="margin-top: 12px;">UX implikacije:</h4>
-            <p>Preporučeno je optimizirati najčešće putanje - brzo učitavanje tih stranica, preload resursa, i jasna navigacija između žanrova.</p>
+            <p>Preporučeno je optimizirati najčešće putanje za brzo učitavanje tih stranica, a važna je i jasna navigacija između žanrova.</p>
         </div>
     `;
 }
