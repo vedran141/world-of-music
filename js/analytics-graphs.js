@@ -17,6 +17,7 @@ window.onAuthStateChanged(window.firebaseAuth, (user) => {
         document.getElementById('login-btn').style.display = 'inline-block';
         document.getElementById('user-info').style.display = 'none';
         document.getElementById('analytics-content').innerHTML = '';
+        document.getElementById('advanced-analytics-content').innerHTML = '';
     }
 });
 
@@ -159,29 +160,13 @@ function analyzeEvents(events) {
     return analytics;
 }
 
-// Prikaz analitike
+// Prikaz analitike - BEZ METRIKA (samo grafovi)
 function displayAnalytics(analytics, events) {
     const contentDiv = document.getElementById('analytics-content');
     
+    // MAKNUTO: div s metrikama (Ukupno događaja, Jedinstvenih korisnika, Pregleda žanrova)
+    
     contentDiv.innerHTML = `
-        <div style="margin-bottom: 24px;">
-            <h3 style="margin-bottom: 16px;">Pregled aktivnosti</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px;">
-                <div class="info-block">
-                    <h4>Ukupno događaja</h4>
-                    <p style="font-size: 32px; font-weight: bold; color: #7b5cff;">${analytics.totalEvents}</p>
-                </div>
-                <div class="info-block">
-                    <h4>Jedinstvenih korisnika</h4>
-                    <p style="font-size: 32px; font-weight: bold; color: #ff4fa3;">${analytics.uniqueUsers}</p>
-                </div>
-                <div class="info-block">
-                    <h4>Pregleda žanrova</h4>
-                    <p style="font-size: 32px; font-weight: bold; color: #4fc3f7;">${Object.values(analytics.genreViews).reduce((a, b) => a + b, 0)}</p>
-                </div>
-            </div>
-        </div>
-
         <div class="analytics-grid">
             <div class="chart-container">
                 <h3>Pregledi po žanrovima</h3>
@@ -198,7 +183,7 @@ function displayAnalytics(analytics, events) {
         </div>
 
         <div style="margin-top: 32px;">
-            <h3>Preporuke za tebe</h3>
+            <h3>🎵 Preporuke za tebe</h3>
             <div id="recommendations" style="margin-top: 16px;"></div>
         </div>
     `;
@@ -268,15 +253,13 @@ function displayAnalytics(analytics, events) {
     });
 
     generateRecommendations(analytics, events);
-
-    displayAdvancedAnalytics(events)
+    displayAdvancedAnalytics(events);
 }
 
 // Preporuke
 function generateRecommendations(analytics, events) {
     if (!currentUser) return;
 
-    // Get current user's genre preferences
     const userEvents = events.filter(e => e.userId === currentUser.uid && e.eventType === 'genre_view');
     const genreCounts = {};
     
@@ -317,7 +300,7 @@ function generateRecommendations(analytics, events) {
         
         recommendationsHtml = `
             <div class="info-block">
-                <h4>${rec.title}</h4>
+                <h4>🎵 ${rec.title}</h4>
                 <p style="color: #a5a5ff; font-style: italic;">${rec.reason}</p>
                 <p style="margin-top: 8px;"><strong>Najčešće slušaš:</strong> ${topGenre}</p>
             </div>
@@ -327,7 +310,7 @@ function generateRecommendations(analytics, events) {
     document.getElementById('recommendations').innerHTML = recommendationsHtml;
 }
 
-// Pozovi ovu funkciju nakon displayAnalytics()
+// === NAPREDNE ANALIZE ===
 async function displayAdvancedAnalytics(events) {
     if (!currentUser) return;
 
@@ -335,13 +318,13 @@ async function displayAdvancedAnalytics(events) {
     
     contentDiv.innerHTML = `
         <div style="margin-bottom: 32px;">
-            <h3>Retention analiza</h3>
+            <h3>📊 Retention analiza</h3>
             <p class="section-intro">Postotak korisnika koji se vraćaju na stranicu nakon prvog posjeta.</p>
             <div id="retention-analysis"></div>
         </div>
 
         <div style="margin-bottom: 32px;">
-            <h3>Path analiza</h3>
+            <h3>🛤️ Path analiza</h3>
             <p class="section-intro">Najčešće putanje kretanja korisnika po stranici.</p>
             <div id="path-analysis"></div>
         </div>
@@ -356,27 +339,32 @@ async function displayAdvancedAnalytics(events) {
     displayPathAnalysis(pathData);
 }
 
-// === RETENTION ANALIZA ===
+// === RETENTION ANALIZA - POPRAVLJENA ===
 function calculateRetention(events) {
     const userFirstVisit = {};
-    const userReturns = {};
+    const userAllVisits = {};
 
-    // Grupiranje po korisnicima
+    // Grupiranje po korisnicima - UKLJUČI SVE DOGAĐAJE
     events.forEach(event => {
         const userId = event.userId;
-        const date = new Date(event.timestamp.seconds * 1000);
+        const timestamp = event.timestamp.seconds * 1000;
+        const date = new Date(timestamp);
         const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD
 
+        // Evidentiraj korisnika
         if (!userFirstVisit[userId]) {
-            userFirstVisit[userId] = dateStr;
+            userFirstVisit[userId] = timestamp;
+        } else {
+            // Ažuriraj ako je raniji datum
+            if (timestamp < userFirstVisit[userId]) {
+                userFirstVisit[userId] = timestamp;
+            }
         }
 
-        if (!userReturns[userId]) {
-            userReturns[userId] = [];
+        if (!userAllVisits[userId]) {
+            userAllVisits[userId] = new Set();
         }
-        if (!userReturns[userId].includes(dateStr)) {
-            userReturns[userId].push(dateStr);
-        }
+        userAllVisits[userId].add(dateStr);
     });
 
     // Izračunaj Day 1 i Day 7 retention
@@ -385,20 +373,24 @@ function calculateRetention(events) {
     const totalUsers = Object.keys(userFirstVisit).length;
 
     Object.keys(userFirstVisit).forEach(userId => {
-        const firstVisit = new Date(userFirstVisit[userId]);
-        const returns = userReturns[userId].map(d => new Date(d));
+        const firstVisitTime = userFirstVisit[userId];
+        const firstVisitDate = new Date(firstVisitTime);
+        const visitDates = Array.from(userAllVisits[userId]).map(d => new Date(d));
 
-        // Day 1 retention
-        const day1 = new Date(firstVisit);
+        // Day 1 retention - točno sljedeći dan
+        const day1 = new Date(firstVisitDate);
         day1.setDate(day1.getDate() + 1);
-        if (returns.some(d => d.toDateString() === day1.toDateString())) {
+        const day1Str = day1.toISOString().split('T')[0];
+        
+        if (userAllVisits[userId].has(day1Str)) {
             day1Count++;
         }
 
-        // Day 7 retention
-        const day7 = new Date(firstVisit);
+        // Day 7 retention - bilo koji dan nakon 7 dana
+        const day7 = new Date(firstVisitDate);
         day7.setDate(day7.getDate() + 7);
-        if (returns.some(d => d >= day7)) {
+        
+        if (visitDates.some(d => d >= day7)) {
             day7Count++;
         }
     });
@@ -434,54 +426,74 @@ function displayRetention(data) {
         </div>
 
         <div class="info-block" style="margin-top: 16px; background: linear-gradient(145deg, #0b0b1a, #171736);">
-            <h4>Interpretacija:</h4>
+            <h4>📝 Interpretacija:</h4>
             <p>${data.day1Retention}% korisnika se vratilo dan nakon prvog posjeta. 
             ${data.day7Retention}% korisnika koristi aplikaciju nakon tjedan dana.</p>
             
-            <h4 style="margin-top: 12px;">UX implikacije:</h4>
+            <h4 style="margin-top: 12px;">💡 UX implikacije:</h4>
             <p>${data.day1Retention < 20 ? 
-                'Nizak Day 1 retention sugerira potrebu za boljim engagement mehanizmima (npr. personalizirane notifikacije).' : 
-                'Dobar Day 1 retention pokazuje da korisnici nalaze vrijednost u aplikaciji odmah.'
+                'Nizak Day 1 retention sugerira potrebu za boljim engagement mehanizmima (npr. personalizirane notifikacije, email podsjetnici).' : 
+                'Dobar Day 1 retention pokazuje da korisnici nalaze vrijednost u aplikaciji odmah nakon prvog posjeta.'
             }</p>
             <p>${data.day7Retention < 10 ? 
-                'Nizak Day 7 retention ukazuje na potrebu za dodavanjem sadržaja koji potiče povratke (npr. preporuke playlisti).' : 
-                'Solidna dugoročna retention vrijednost.'
+                'Nizak Day 7 retention ukazuje na potrebu za dodavanjem sadržaja koji potiče povratke (npr. weekly playlist preporuke, novi bendovi).' : 
+                'Solidna dugoročna retention vrijednost pokazuje da aplikacija zadržava korisnike.'
             }</p>
         </div>
     `;
 }
 
-// === PATH ANALIZA ===
+// === PATH ANALIZA - POPRAVLJENA (DETALJNIJA) ===
 function calculatePathAnalysis(events) {
     const userJourneys = {};
 
-    events.forEach(event => {
+    // Sortiraj događaje po vremenu za svakog korisnika
+    const sortedEvents = [...events].sort((a, b) => a.timestamp.seconds - b.timestamp.seconds);
+
+    sortedEvents.forEach(event => {
         const userId = event.userId;
         if (!userJourneys[userId]) {
             userJourneys[userId] = [];
         }
 
+        // Mapiranje stranica - POBOLJŠANO
         let pageName = 'Unknown';
-        if (event.page === '/' || event.page.includes('index.html')) pageName = 'Home';
-        else if (event.page.includes('indie')) pageName = 'Indie';
-        else if (event.page.includes('classic_rock')) pageName = 'Classic Rock';
-        else if (event.page.includes('funk')) pageName = 'Funk';
-        else if (event.page.includes('stats')) pageName = 'Stats';
-        else if (event.page.includes('about')) pageName = 'About';
+        const page = event.page || '';
+        
+        if (page === '/' || page.includes('index.html') || page === '') pageName = 'Home';
+        else if (page.includes('indie.html')) pageName = 'Indie';
+        else if (page.includes('classic_rock.html')) pageName = 'Classic Rock';
+        else if (page.includes('funk.html')) pageName = 'Funk';
+        else if (page.includes('stats.html')) pageName = 'Stats';
+        else if (page.includes('about.html')) pageName = 'About';
+        
+        // Također provjeri eventType ako stranica nije jasna
+        if (pageName === 'Unknown' && event.eventType === 'genre_view') {
+            if (event.genre === 'indie') pageName = 'Indie';
+            else if (event.genre === 'classic_rock') pageName = 'Classic Rock';
+            else if (event.genre === 'funk') pageName = 'Funk';
+        }
 
-        userJourneys[userId].push(pageName);
+        // Dodaj samo ako se razlikuje od prethodnog (izbjegni duplikate)
+        const lastPage = userJourneys[userId][userJourneys[userId].length - 1];
+        if (lastPage !== pageName) {
+            userJourneys[userId].push(pageName);
+        }
     });
 
-    // Pronađi najčešće putanje (prva 3 klika)
+    // Pronađi najčešće putanje (prva 3-4 koraka)
     const pathCounts = {};
     Object.values(userJourneys).forEach(journey => {
-        const path = journey.slice(0, 3).join(' → ');
-        pathCounts[path] = (pathCounts[path] || 0) + 1;
+        // Različite duljine putanja
+        for (let len = 2; len <= Math.min(4, journey.length); len++) {
+            const path = journey.slice(0, len).join(' → ');
+            pathCounts[path] = (pathCounts[path] || 0) + 1;
+        }
     });
 
     const topPaths = Object.entries(pathCounts)
         .sort((a, b) => b[1] - a[1])
-        .slice(0, 5);
+        .slice(0, 8); // Prikaži top 8 putanja
 
     return { topPaths, totalJourneys: Object.keys(userJourneys).length };
 }
@@ -491,8 +503,8 @@ function displayPathAnalysis(data) {
     
     const pathsHtml = data.topPaths.map(([path, count]) => `
         <div class="info-block" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <h4 style="margin: 0;">${path}</h4>
+            <div style="flex: 1;">
+                <h4 style="margin: 0; font-size: 16px;">${path}</h4>
             </div>
             <div style="text-align: right;">
                 <p style="font-size: 24px; font-weight: bold; color: #7b5cff; margin: 0;">${count}</p>
@@ -507,11 +519,15 @@ function displayPathAnalysis(data) {
         </div>
 
         <div class="info-block" style="margin-top: 24px; background: linear-gradient(145deg, #0b0b1a, #171736);">
-            <h4>Interpretacija:</h4>
-            <p>Najčešća putanja pokazuje tipično ponašanje korisnika pri istraživanju stranice. Većina korisnika kreće na stranicu sa statistikama i ide prema žanrovima.</p>
+            <h4>📝 Interpretacija:</h4>
+            <p>Najčešće putanje pokazuju kako korisnici istražuju stranicu. Većina posjeta kreće s Stats stranice (gdje se nalaze analitike i uvid u podatke), a zatim se korismici kreću prema žanrovima koji ih zanimaju.</p>
             
-            <h4 style="margin-top: 12px;">UX implikacije:</h4>
-            <p>Preporučeno je optimizirati najčešće putanje za brzo učitavanje tih stranica, a važna je i jasna navigacija između žanrova.</p>
+            <h4 style="margin-top: 12px;">💡 UX implikacije:</h4>
+            <p>Budući da Stats stranica služi kao polazna točka, važno je osigurati brzo učitavanje i jasne CTA gumbe prema žanrovima. Preporučeno je dodati quick links na popularnim putanjama.</p>
+            ${data.topPaths.some(([path]) => path.split(' → ').length === 1) ? 
+                '<p><strong>⚠️ Netipična putanja:</strong> Neki korisnici napuštaju stranicu nakon samo jednog pregleda - potrebno je poboljšati engagement na landing stranicama.</p>' : 
+                ''
+            }
         </div>
     `;
 }
