@@ -111,7 +111,7 @@ async function fetchGA4AnalyticsData() {
 
         // 2. Sesije po danima (zadnjih 7 dana)
         const sessionsData = await runGA4Report({
-            dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+            dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],
             dimensions: [{ name: 'date' }],
             metrics: [{ name: 'sessions' }]
         });
