@@ -335,19 +335,13 @@ async function displayAdvancedAnalytics(events) {
     
     contentDiv.innerHTML = `
         <div style="margin-bottom: 32px;">
-            <h3>📊 Retention Analiza</h3>
+            <h3>Retention analiza</h3>
             <p class="section-intro">Postotak korisnika koji se vraćaju na stranicu nakon prvog posjeta.</p>
             <div id="retention-analysis"></div>
         </div>
 
         <div style="margin-bottom: 32px;">
-            <h3>🔻 Funnel Analiza</h3>
-            <p class="section-intro">Tok korisnika kroz stranicu: Home → Genre → Detalji</p>
-            <div id="funnel-analysis"></div>
-        </div>
-
-        <div style="margin-bottom: 32px;">
-            <h3>🛤️ Path Analiza</h3>
+            <h3>Path analiza</h3>
             <p class="section-intro">Najčešće putanje kretanja korisnika po stranici.</p>
             <div id="path-analysis"></div>
         </div>
@@ -355,12 +349,10 @@ async function displayAdvancedAnalytics(events) {
 
     // Računaj analize
     const retentionData = calculateRetention(events);
-    const funnelData = calculateFunnel(events);
     const pathData = calculatePathAnalysis(events);
 
     // Prikaži rezultate
     displayRetention(retentionData);
-    displayFunnel(funnelData);
     displayPathAnalysis(pathData);
 }
 
@@ -442,11 +434,11 @@ function displayRetention(data) {
         </div>
 
         <div class="info-block" style="margin-top: 16px; background: linear-gradient(145deg, #0b0b1a, #171736);">
-            <h4>📝 Interpretacija:</h4>
+            <h4>Interpretacija:</h4>
             <p>${data.day1Retention}% korisnika se vratilo dan nakon prvog posjeta. 
             ${data.day7Retention}% korisnika koristi aplikaciju nakon tjedan dana.</p>
             
-            <h4 style="margin-top: 12px;">💡 UX Implikacije:</h4>
+            <h4 style="margin-top: 12px;">UX implikacije:</h4>
             <p>${data.day1Retention < 20 ? 
                 'Nizak Day 1 retention sugerira potrebu za boljim onboardingom i engagement mehanizmima (npr. personalizirane notifikacije).' : 
                 'Dobar Day 1 retention pokazuje da korisnici nalaze vrijednost u aplikaciji odmah.'
@@ -454,92 +446,6 @@ function displayRetention(data) {
             <p>${data.day7Retention < 10 ? 
                 'Nizak Day 7 retention ukazuje na potrebu za dodavanjem sadržaja koji potiče povratke (npr. novi žanrovi, playlist preporuke).' : 
                 'Solidna dugoročna retention vrijednost.'
-            }</p>
-        </div>
-    `;
-}
-
-// === FUNNEL ANALIZA ===
-function calculateFunnel(events) {
-    const userPaths = {};
-
-    events.forEach(event => {
-        const userId = event.userId;
-        if (!userPaths[userId]) {
-            userPaths[userId] = {
-                visitedHome: false,
-                visitedGenre: false,
-                viewedDetails: false
-            };
-        }
-
-        // Home page
-        if (event.page === '/' || event.page.includes('index.html')) {
-            userPaths[userId].visitedHome = true;
-        }
-
-        // Genre pages
-        if (event.eventType === 'genre_view') {
-            userPaths[userId].visitedGenre = true;
-        }
-
-        // Details (pretpostavljamo da je to više od 2 genre views)
-        // ili možeš dodati novi event tip 'details_view'
-    });
-
-    const totalUsers = Object.keys(userPaths).length;
-    const homeVisitors = Object.values(userPaths).filter(p => p.visitedHome).length;
-    const genreVisitors = Object.values(userPaths).filter(p => p.visitedGenre).length;
-
-    return {
-        step1: { name: 'Posjeta Home', count: homeVisitors, percentage: 100 },
-        step2: { name: 'Pregled žanra', count: genreVisitors, percentage: homeVisitors > 0 ? (genreVisitors / homeVisitors * 100).toFixed(1) : 0 },
-        step3: { name: 'Detalji benda', count: Math.floor(genreVisitors * 0.4), percentage: genreVisitors > 0 ? 40 : 0 }, // Simulirano
-        totalUsers: homeVisitors
-    };
-}
-
-function displayFunnel(data) {
-    const container = document.getElementById('funnel-analysis');
-    
-    const maxWidth = 400;
-    const step1Width = maxWidth;
-    const step2Width = maxWidth * (data.step2.percentage / 100);
-    const step3Width = maxWidth * (data.step3.percentage / 100);
-
-    container.innerHTML = `
-        <div style="margin-top: 16px;">
-            <div class="funnel-step" style="width: ${step1Width}px; background: linear-gradient(135deg, #7b5cff, #9b7cff); padding: 16px; margin: 12px auto; border-radius: 8px; text-align: center;">
-                <h4 style="margin: 0;">${data.step1.name}</h4>
-                <p style="margin: 4px 0; font-size: 24px; font-weight: bold;">${data.step1.count} korisnika</p>
-                <p style="margin: 0; font-size: 14px;">${data.step1.percentage}%</p>
-            </div>
-
-            <div class="funnel-step" style="width: ${step2Width}px; background: linear-gradient(135deg, #ff4fa3, #ff6fb3); padding: 16px; margin: 12px auto; border-radius: 8px; text-align: center;">
-                <h4 style="margin: 0;">${data.step2.name}</h4>
-                <p style="margin: 4px 0; font-size: 24px; font-weight: bold;">${data.step2.count} korisnika</p>
-                <p style="margin: 0; font-size: 14px;">${data.step2.percentage}%</p>
-            </div>
-
-            <div class="funnel-step" style="width: ${step3Width}px; background: linear-gradient(135deg, #4fc3f7, #6fd3ff); padding: 16px; margin: 12px auto; border-radius: 8px; text-align: center;">
-                <h4 style="margin: 0;">${data.step3.name}</h4>
-                <p style="margin: 4px 0; font-size: 24px; font-weight: bold;">${data.step3.count} korisnika</p>
-                <p style="margin: 0; font-size: 14px;">${data.step3.percentage}%</p>
-            </div>
-        </div>
-
-        <div class="info-block" style="margin-top: 24px; background: linear-gradient(145deg, #0b0b1a, #171736);">
-            <h4>📝 Interpretacija:</h4>
-            <p>Od ${data.totalUsers} korisnika koji posjete home stranicu, ${data.step2.percentage}% nastavi pregledavati žanrove, a ${data.step3.percentage}% detaljnije istražuje bendove.</p>
-            
-            <h4 style="margin-top: 12px;">💡 UX Implikacije:</h4>
-            <p>${data.step2.percentage < 50 ? 
-                'Veliki pad između home i genre stranice sugerira potrebu za boljom navigacijom i istaknutijim CTA gumbima.' : 
-                'Dobra konverzija ka žanrovima pokazuje da je navigacija jasna.'
-            }</p>
-            <p>${data.step3.percentage < 30 ? 
-                'Nizak engagement na bendovima ukazuje na potrebu za interaktivnijim sadržajem (npr. preview pjesama, YouTube integr acija).' : 
-                'Korisnici su zainteresirani za detaljniji sadržaj.'
             }</p>
         </div>
     `;
@@ -601,15 +507,11 @@ function displayPathAnalysis(data) {
         </div>
 
         <div class="info-block" style="margin-top: 24px; background: linear-gradient(145deg, #0b0b1a, #171736);">
-            <h4>📝 Interpretacija:</h4>
+            <h4>Interpretacija:</h4>
             <p>Najčešća putanja pokazuje tipično ponašanje korisnika pri istraživanju stranice. Većina korisnika kreće s home stranice i ide prema žanrovima.</p>
             
-            <h4 style="margin-top: 12px;">💡 UX Implikacije:</h4>
+            <h4 style="margin-top: 12px;">UX implikacije:</h4>
             <p>Preporučeno je optimizirati najčešće putanje - brzo učitavanje tih stranica, preload resursa, i jasna navigacija između žanrova.</p>
-            ${data.topPaths.some(([path]) => path.includes('Stats → Stats → Stats')) ? 
-                '<p><strong>⚠️ Netipična putanja:</strong> Ponavljanje Stats stranice može ukazivati na bugove ili zbunjujuće UI elemente.</p>' : 
-                ''
-            }
         </div>
     `;
 }
