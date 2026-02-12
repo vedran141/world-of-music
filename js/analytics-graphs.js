@@ -162,96 +162,6 @@ function analyzeEvents(events) {
 
 // Prikaz analitike - BEZ METRIKA (samo grafovi)
 function displayAnalytics(analytics, events) {
-    const contentDiv = document.getElementById('analytics-content');
-    
-    // MAKNUTO: div s metrikama (Ukupno događaja, Jedinstvenih korisnika, Pregleda žanrova)
-    
-    contentDiv.innerHTML = `
-        <div class="analytics-grid">
-            <div class="chart-container">
-                <h3>Pregledi po žanrovima</h3>
-                <canvas id="genreChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>Aktivnost po danima</h3>
-                <canvas id="dailyChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>Tipovi događaja</h3>
-                <canvas id="eventTypeChart"></canvas>
-            </div>
-        </div>
-
-        <div style="margin-top: 32px;">
-            <h3>🎵 Preporuke za tebe</h3>
-            <div id="recommendations" style="margin-top: 16px;"></div>
-        </div>
-    `;
-
-    // Graf 1: Pregledi po žanrovima
-    if (Object.keys(analytics.genreViews).length > 0) {
-        new Chart(document.getElementById('genreChart'), {
-            type: 'bar',
-            data: {
-                labels: Object.keys(analytics.genreViews),
-                datasets: [{
-                    label: 'Broj pregleda',
-                    data: Object.values(analytics.genreViews),
-                    backgroundColor: ['#7b5cff', '#ff4fa3', '#4fc3f7']
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: { beginAtZero: true, ticks: { color: '#f5f5f5' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                    x: { ticks: { color: '#f5f5f5' }, grid: { color: 'rgba(255,255,255,0.1)' } }
-                },
-                plugins: { legend: { labels: { color: '#f5f5f5' } } }
-            }
-        });
-    }
-
-    // Graf 2: Aktivnost po danima
-    const sortedDates = Object.keys(analytics.dailyActivity).sort();
-    new Chart(document.getElementById('dailyChart'), {
-        type: 'line',
-        data: {
-            labels: sortedDates,
-            datasets: [{
-                label: 'Aktivnost',
-                data: sortedDates.map(date => analytics.dailyActivity[date]),
-                borderColor: '#7b5cff',
-                backgroundColor: 'rgba(123, 92, 255, 0.1)',
-                tension: 0.3,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: { beginAtZero: true, ticks: { color: '#f5f5f5' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                x: { ticks: { color: '#f5f5f5' }, grid: { color: 'rgba(255,255,255,0.1)' } }
-            },
-            plugins: { legend: { labels: { color: '#f5f5f5' } } }
-        }
-    });
-
-    // Graf 3: Tipovi događaja
-    new Chart(document.getElementById('eventTypeChart'), {
-        type: 'pie',
-        data: {
-            labels: Object.keys(analytics.eventsByType),
-            datasets: [{
-                data: Object.values(analytics.eventsByType),
-                backgroundColor: ['#7b5cff', '#ff4fa3', '#4fc3f7', '#ffd740']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { labels: { color: '#f5f5f5' } } }
-        }
-    });
-
     generateRecommendations(analytics, events);
     displayAdvancedAnalytics(events);
 }
@@ -318,13 +228,13 @@ async function displayAdvancedAnalytics(events) {
     
     contentDiv.innerHTML = `
         <div style="margin-bottom: 32px;">
-            <h3>📊 Retention analiza</h3>
+            <h3>Retention analiza</h3>
             <p class="section-intro">Postotak korisnika koji se vraćaju na stranicu nakon prvog posjeta.</p>
             <div id="retention-analysis"></div>
         </div>
 
         <div style="margin-bottom: 32px;">
-            <h3>🛤️ Path analiza</h3>
+            <h3>Path analiza</h3>
             <p class="section-intro">Najčešće putanje kretanja korisnika po stranici.</p>
             <div id="path-analysis"></div>
         </div>
@@ -426,11 +336,11 @@ function displayRetention(data) {
         </div>
 
         <div class="info-block" style="margin-top: 16px; background: linear-gradient(145deg, #0b0b1a, #171736);">
-            <h4>📝 Interpretacija:</h4>
+            <h4>Interpretacija:</h4>
             <p>${data.day1Retention}% korisnika se vratilo dan nakon prvog posjeta. 
             ${data.day7Retention}% korisnika koristi aplikaciju nakon tjedan dana.</p>
             
-            <h4 style="margin-top: 12px;">💡 UX implikacije:</h4>
+            <h4 style="margin-top: 12px;">UX implikacije:</h4>
             <p>${data.day1Retention < 20 ? 
                 'Nizak Day 1 retention sugerira potrebu za boljim engagement mehanizmima (npr. personalizirane notifikacije, email podsjetnici).' : 
                 'Dobar Day 1 retention pokazuje da korisnici nalaze vrijednost u aplikaciji odmah nakon prvog posjeta.'
@@ -519,10 +429,10 @@ function displayPathAnalysis(data) {
         </div>
 
         <div class="info-block" style="margin-top: 24px; background: linear-gradient(145deg, #0b0b1a, #171736);">
-            <h4>📝 Interpretacija:</h4>
+            <h4>Interpretacija:</h4>
             <p>Najčešće putanje pokazuju kako korisnici istražuju stranicu. Većina posjeta kreće s Stats stranice (gdje se nalaze analitike i uvid u podatke), a zatim se korismici kreću prema žanrovima koji ih zanimaju.</p>
             
-            <h4 style="margin-top: 12px;">💡 UX implikacije:</h4>
+            <h4 style="margin-top: 12px;">UX implikacije:</h4>
             <p>Budući da Stats stranica služi kao polazna točka, važno je osigurati brzo učitavanje i jasne CTA gumbe prema žanrovima. Preporučeno je dodati quick links na popularnim putanjama.</p>
             ${data.topPaths.some(([path]) => path.split(' → ').length === 1) ? 
                 '<p><strong>⚠️ Netipična putanja:</strong> Neki korisnici napuštaju stranicu nakon samo jednog pregleda - potrebno je poboljšati engagement na landing stranicama.</p>' : 
