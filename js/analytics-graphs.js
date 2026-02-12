@@ -162,6 +162,17 @@ function analyzeEvents(events) {
 
 // Prikaz analitike - BEZ METRIKA (samo grafovi)
 function displayAnalytics(analytics, events) {
+    const contentDiv = document.getElementById('analytics-content');
+    
+    // MAKNUTO: div s metrikama (Ukupno događaja, Jedinstvenih korisnika, Pregleda žanrova)
+    
+    contentDiv.innerHTML = `
+        <div style="margin-top: 16px;">
+            <h3>Preporuke za tebe</h3>
+            <div id="recommendations" style="margin-top: 16px;"></div>
+        </div>
+    `;
+
     generateRecommendations(analytics, events);
     displayAdvancedAnalytics(events);
 }
